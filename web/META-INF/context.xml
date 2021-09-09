@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/Lab01_Yellow_Moon">
+  <Resource auth="Container" driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver" name="SE1502" 
+            username="sa" password="123456" type="javax.sql.DataSource" 
+            url="jdbc:sqlserver://localhost:1433;databaseName=lab1_yellow_moon" >   
+    </Resource>
+</Context>

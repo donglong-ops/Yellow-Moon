@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Create New Cake</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="container mt-3 border bg-light p-4" style="width: 700px" >
+            <h1 class="text-center">Create New Cake</h1>
+            <form action="DispatcherController?btAction=Add New Cake" method="POST" enctype="multipart/form-data">
+                <div class="form-row">
+                    <div class="col-md-6 mb-2">
+                        Cake Name*: <input class="form-control" type="text" name="txtCake" value="" />  (2 - 70 characters)</br>
+                    </div>
+                    <div class="col-md-6">
+                        Description*: <input class="form-control" type="text" name="txtDes" value="" /> (2 - 300 characters)</br>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col-md-6 mb-2">
+                        Category*: 
+                        <select class="form-control form-control-line" name="txtCategory">
+                            <option value="1">Category : Egg</option>
+                            <option value="2">Category : No Egg</option>
+                            <option value="3">Category : Clammy</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        Price*: <input class="form-control" type="number" name="txtPrice" value="" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col-md-6">
+                        Quantity*: <input class="form-control" type="number" name="txtQuantity" value="" />
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        Expiration Date*: 
+                        <input class="form-control" type="date" name="txtExprirationDate" value="" /></br>
+                    </div>
+                </div>
+
+                Image*: <input type="file" name="fileImage" value="" /></br>
+                <div class="text-center"> 
+                    <input class="btn btn-success mt-2" type="submit" name="btAction" value="Add New Cake" />
+                    <input class="btn-light btn border mt-2" type="reset" value="Reset" />
+                </div>
+            </form>
+        </div>
+    </body> 
+</html>
