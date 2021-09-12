@@ -101,10 +101,10 @@ public class CartObject implements Serializable {
     public float getTotalPrice() {
         float total = 0;
         if (cakes != null && items != null) {
-            for (Integer foodId : cakes.keySet()) {
+            for (Integer cakeId : cakes.keySet()) {
                 if (items != null) {
-                    int amount = items.get(foodId);
-                    float price = cakes.get(foodId).getCakePrice();
+                    int amount = items.get(cakeId);
+                    float price = cakes.get(cakeId).getCakePrice();
                     total += amount * price;   
                 }
             }

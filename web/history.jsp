@@ -15,27 +15,29 @@
     </head>
     <body>
         <jsp:include page="navbar.jsp"/>
-        <div class="container mt-3 border bg-light p-4 mb-5"  >
+        <div class="container mt-2 border bg-light p-4 mb-5"  >
             <Form action="DispatcherController">
                 <div class="form-row" >          
                     <div class="col-md-3" >
                         <h1>Your History</h1>
                     </div>
-                    <div class="col-md-3 mt-3">
-                        <input placeholder="From Date" type="date" class="form-control" name="txtFromDate" value="${param.txtFromDate}" />     
-                    </div> 
-                    <div class="col-md-3 mt-3">
-                        <input placeholder="To Date" type="date" class="form-control" name="txtToDate" value="${param.txtToDate}" />        
+                    <div class="col-md-2 mt-3">
+                        BookingID<input placeholder="Input your orderID" type="text" class="form-control" name="txtBookingID" value="${param.txtBookingID}" />        
                     </div> 
                     <div class="col-md-2 mt-3">
-                        <input class="col-md- btn btn-primary px-5" type="submit" name="btAction" value="Search History" />
+                        From Date<input placeholder="From Date" type="date" class="form-control" name="txtFromDate" value="${param.txtFromDate}" />     
                     </div> 
-                    <c:if test="${not empty requestScope.DATEERR}">
-                        <input class="col-md-3" style="color: red; margin-left: 35%" value="${requestScope.DATEERR}">
-                    </c:if>
+                    <div class="col-md-2 mt-3">
+                        To Date<input placeholder="To Date" type="date" class="form-control" name="txtToDate" value="${param.txtToDate}" />        
+                    </div> 
+
+                    <div class="col-md-2 mt-3">
+                        .<input class="col-md- btn btn-primary px-5" type="submit" name="btAction" value="Search History" />
+                    </div> 
                 </div>
             </Form>
             <c:set var="historyList" value="${requestScope.ALLHISTORY}"/>
+            <c:set var="user" value="${sessionScope.USER}"/>
         </div>
         <c:if test="${not empty historyList}">
             <table class="container table table-bordered  p-4">
@@ -45,6 +47,8 @@
                         <th>DateBuy</th>
                         <th>Total</th>
                         <th>Payment</th>
+                        <th>Payment Status</th>
+                        <th>Address</th>
                         <th><a class="btn btn-success text-center" href="search.jsp">Let's Go shopping</a></th>
                     </tr>
                 </thead>
@@ -54,7 +58,9 @@
                             <td>${item.id}</td>
                             <td>${item.importedDate}</td>
                             <td>${item.total}</td>
-                            <td>${item.payment}</td> 
+                            <td>${item.payment}</td>
+                            <td style="color: green">${item.paymentStatus}</td>
+                            <td>${user.address}</td>
                             <td>
                                 <c:url var="viewMore" value="DispatcherController?btAction=ViewDetail">
                                     <c:param name="ID" value="${item.id}"> </c:param>

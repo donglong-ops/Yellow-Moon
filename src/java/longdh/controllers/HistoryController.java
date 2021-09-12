@@ -28,7 +28,6 @@ import longdh.registration.RegistrationDTO;
 public class HistoryController extends HttpServlet {
 
     private final String VIEW_HISTORY = "history.jsp";
-    private final String LOST_SESSION_PAGE = "login.html";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -48,13 +47,8 @@ public class HistoryController extends HttpServlet {
         BookingDAO bookDao = new BookingDAO();
         try {
             RegistrationDTO userDTO = (RegistrationDTO) session.getAttribute("USER");
-            //if (userDTO.getId() > 0) {
-                List<BookingDTO> list = bookDao.allBookingUser(userDTO.getId());
-                request.setAttribute("ALLHISTORY", list);
-//            } else {
-//                session.removeAttribute("USER");
-//                url = LOST_SESSION_PAGE;
-//            }
+            List<BookingDTO> list = bookDao.allBookingUser(userDTO.getId());
+            request.setAttribute("ALLHISTORY", list);
         } catch (SQLException ex) {
             log("Error History SQL: " + ex.getMessage());
         } catch (NamingException ex) {

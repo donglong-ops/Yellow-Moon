@@ -11,13 +11,13 @@
     <%@page contentType="text/html" pageEncoding="UTF-8"%>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <title>Search Page</title>
+        <title>Manager Page</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     </head>
     <body>
         <jsp:include page="navbar.jsp"/>
         <h2 class="container bg-light text-center mt-5"> Manager Your Cakes</h2>
-        <c:set var="products" value="${sessionScope.AllPRODUCT}"/>
+        <c:set var="products" value="${requestScope.AllPRODUCT}"/>
         <div class="container mt-5" style="width: 1200px">
             <c:if test="${not empty products}">
                 <table class=" table table-bordered">
@@ -28,9 +28,9 @@
                             <th>Image</th>
                             <th>Description</th>
                             <th>Price</th>
-                            <th>Quantity</th>
+                            <th>Quan</th>
                             <th>CreateDate</th>
-                            <th>EpirationDate</th>
+                            <th>EpiDate</th>
                             <th>Cate</th>
                             <th>Action</th>
                         </tr>
@@ -40,11 +40,11 @@
                         <c:forEach var="dto" items="${products}" varStatus="counter">
                             <tr>
                                 <td>${counter.count} </td>
-                                <td>${dto.cakeName}</td>
+                                <td style="width: 140px">${dto.cakeName}</td>
                                 <td>
-                                    <img class="border rounded" src="${dto.imageLink}" width="150" height="120"/>
+                                    <img class="border rounded" src="${dto.imageLink}" width="110" height="100"/>
                                 </td>
-                                <td>${dto.description}</td> 
+                                <td style="width: 170px">${dto.description}</td> 
                                 <td>${dto.cakePrice}</td>
                                 <td>${dto.quantity}</td>
                                 <td>${dto.createDate}</td>

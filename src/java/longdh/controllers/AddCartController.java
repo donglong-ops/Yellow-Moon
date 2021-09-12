@@ -42,8 +42,7 @@ public class AddCartController extends HttpServlet {
         request.setCharacterEncoding("utf-8");
         response.setCharacterEncoding("utf-8");
         PrintWriter out = response.getWriter();
-        String url = "";
-        BookingDetailDAO bookingItemDAO = new BookingDetailDAO();
+        String url = null;
         CakeDAO dao = new CakeDAO();
 
         String cakeId = request.getParameter("cakeId");
@@ -54,29 +53,19 @@ public class AddCartController extends HttpServlet {
         String pageNumber = request.getParameter("pageNum");
         try {
             HttpSession session = request.getSession();
-            if (session.getAttribute("USER") == null) {
-                url = "login.jsp";
-                return;
-            }
+//            if (session.getAttribute("USER") == null) {
+//                url = "login.jsp";
+//                return;
+//            }
             CartObject cart = (CartObject) session.getAttribute("CART");
             if (cart == null) {
                 cart = new CartObject();
             }
             int id = Integer.parseInt(cakeId);
 
-            int totalBooked = bookingItemDAO.countTotalBookedCake(id);
-            Map<Integer, Integer> items = cart.getItems();
-            int currentAmountInCart = 0;
-            if (items != null) {
-                Integer item = items.get(id);
-                if (item != null) {
-                    currentAmountInCart = item;
-                }
-            }
-
-            int cakeQuantity = dao.getCakeQuantity(id);
-            if (cakeQuantity >= totalBooked + currentAmountInCart) {
-                url += "DispatcherController"
+            int cakeQuantity = dao.getCakeQuantity(id); 
+            if (cakeQuantity > 0) {
+                url = "DispatcherController"
                         + "?btAction=Search"
                         + "&txtSearchName=" + searchName
                         + "&txtSearchCategory=" + searchCate

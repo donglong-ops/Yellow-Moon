@@ -22,8 +22,7 @@ public class MomoUtils {
     public static final String accessKey = "Q8gbQHeDesB2Xs0t";
     public static final String sceretKey = "PPuDXq1KowPT1ftR8DvlQTHhC03aul17";
     public static final String apiEndpoint = "https://test-payment.momo.vn/gw_payment/transactionProcessor";
-    public static final String returnUrl = "https://itour-travel.herokuapp.com/finish-payment";
-//    public static final String returnUrl = "http://localhost:8084/TravelTour/finish-payment";
+    public static final String returnUrl = "http://localhost:8084/Lab01_Yellow_Moon/FinishPayMomoController";
     public static final String requestType = "captureMoMoWallet";
 
     public static MomoResponse requestPayment(

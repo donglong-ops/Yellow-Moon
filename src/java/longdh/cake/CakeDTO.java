@@ -29,8 +29,9 @@ public class CakeDTO implements Serializable{
     public CakeDTO() {
     }
 
-    public CakeDTO(int cakeId, String cakeName, float cakePrice, int quantity, int categoriID, Date createDate, Date expirationDate, String description, String imageLink) {
+    public CakeDTO(int cakeId, int statusId, String cakeName, float cakePrice, int quantity, int categoriID, Date createDate, Date expirationDate, String description, String imageLink) {
         this.cakeId = cakeId;
+        this.statusId = statusId;
         this.cakeName = cakeName;
         this.cakePrice = cakePrice;
         this.quantity = quantity;
@@ -41,8 +42,9 @@ public class CakeDTO implements Serializable{
         this.imageLink = imageLink;
     }
 
-    public CakeDTO(int cakeId, String cakeName, float cakePrice, int quantity, int categoriID, String description, String imageLink, Date updateDate, Date expirationDate, int userId) {
+    public CakeDTO(int cakeId,int statusId, String cakeName, float cakePrice, int quantity, int categoriID, String description, String imageLink, Date updateDate, Date expirationDate, int userId) {
         this.cakeId = cakeId;
+        this.statusId = statusId;
         this.cakeName = cakeName;
         this.cakePrice = cakePrice;
         this.quantity = quantity;
@@ -54,8 +56,9 @@ public class CakeDTO implements Serializable{
         this.userId = userId;
     }
 
-    public CakeDTO(int cakeId, String cakeName, float cakePrice, int quantity, int categoriID, Date createDate, Date expirationDate, String description, String imageLink, Date updateDate, int userId) {
+    public CakeDTO(int cakeId,int statusId, String cakeName, float cakePrice, int quantity, int categoriID, Date createDate, Date expirationDate, String description, String imageLink, Date updateDate, int userId) {
         this.cakeId = cakeId;
+        this.statusId = statusId;
         this.cakeName = cakeName;
         this.cakePrice = cakePrice;
         this.quantity = quantity;

@@ -16,25 +16,21 @@
     <body>
         <jsp:include page="navbar.jsp"/>
         <div class="container">
-            <c:set var="cart" value="${sessionScope.CART}"></c:set>
-
-            <c:if test="${not empty cart}">
-                <h1>Your Cart Includes</h1>
-            </c:if>
+            <c:set var="cart" value="${sessionScope.CART}"/>
 
             <div class="form-row mb-2 mt-3">
+                <c:if test="${not empty cart}">
+                    <h2>Your Cart Includes</h2>
+                </c:if>
                 <div class="col-md-3">
                     <a href="search.jsp" class="btn btn-primary">Add More Items To Cart</a>
                 </div>
             </div>
 
-
             <c:set var="confirmError" value="${requestScope.CONFIRM_ERROR}"/>
             <c:if test="${not empty confirmError}">
                 <p class="alert alert-danger">
-                    <c:forEach var="item" items="${confirmError}">
-                        <font color="red">${item}<br/></font>
-                    </c:forEach>
+                    <font color="red">${confirmError}<br/></font>
                 </p>
             </c:if>
 
@@ -44,11 +40,11 @@
                         <tr>
                             <th>No.</th>
                             <th>Name</th>
-                            <th>Price</th>
                             <th>Category</th>
                             <th>Description</th>
                             <th>Image</th>
                             <th>Amount</th>
+                            <th>Price</th>
                             <th>Total</th>
                             <th>Update</th>
                             <th>Delete</th>
@@ -66,11 +62,11 @@
 
                                 <td>${counter.count}</td>
                                 <td>${dto.cakeName}</td>
-                                <td>${cart.getPriceDisplay(cakeId)}</td>
                                 <td>${dao.getCategoryName(dto.categoriID)}</td>
                                 <td>${dto.description}</td>
-                                <td><img src="${dto.imageLink}" width="160"/></td> 
+                                <td><img src="${dto.imageLink}" width="140" height="110"/></td> 
                                 <td><input class="form-control" type="text" name="txtAmount" value="${amount}" /></td>
+                                <td>${cart.getPriceDisplay(cakeId)}</td>
                                 <td>${cart.getPriceOfEachItemDisplay(cakeId)}</td>
 
                                 <td>
@@ -87,23 +83,49 @@
                         </form>
                     </c:forEach>
                     <tr>
-                        <td colspan="5"></td>
-                        <td>Total Price: ${cart.totalPriceDisplay}</td>
-                        <td colspan="4">                    
-                            <form action="DispatcherController" method="POST">
+                    <form action="DispatcherController?btAction=Confirm Booking" method="POST">
+                        <td colspan="5">
+                            <h3 class="text-center" style="color: red">Input your Information</h3>
                                 <div class="form-row">
-                                    <div class="col-md-6 mb-2">
-                                        Payment: 
-                                        <select class="form-control form-control-line" name="txtCategory">
-                                            <option value="1">Cash</option>
-                                            <option value="2">Momo</option>
-                                        </select>
+                                    <div class="col-md-4">
+                                        Your Name*: <input class="form-control" type="text" name="txtCustomerName" value="${txtCustomerName}"
+                                            <c:if test="${sessionScope.USER.fullname != null}">
+                                                disabled
+                                            </c:if> /> 
                                     </div>
-                                    <div class="col-md-6 mt-4">
-                                        <input class="btn btn-success ml-5" type="submit" name="btAction" value="Confirm Booking" onclick="return confirm('Are you sure to Confirm?');"/>       
+                                    <div class="col-md-3">
+                                        Phone*: <input class="form-control" type="number" name="txtCustomerPhone" value="${txtCustomerPhone}"
+                                            <c:if test="${sessionScope.USER.fullname != null}">
+                                                disabled
+                                            </c:if>/>
                                     </div>
-                            </form> 
+                                    <div class="col-md-5">
+                                        Address Ship*: <input class="form-control" type="text" name="txtCustomerAddress" value="${txtCustomerAddress}"
+                                            <c:if test="${sessionScope.USER.fullname != null}">
+                                                disabled
+                                            </c:if>/> 
+                                    </div>
+                                </div>
+                                <c:set var="checkOuterror" value="${requestScope.CHECKOUTERROR}"></c:set>
+                                <c:if test="${not empty checkOuterror}">
+                                    <font class="text-center" color="red">${checkOuterror}</font>     
+                                </c:if>
                         </td>
+                        <td>Total Price: ${cart.totalPriceDisplay}</td>
+                        <td colspan="4">   
+                            <div class="form-row">
+                                <div class="col-md-6 mb-2">
+                                    Payment type: 
+                                    <select class="form-control form-control-line" name="txtPaymentType">
+                                        <option value="CASH">Cash</option>
+                                        <option value="MOMO">Momo payment</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mt-4">
+                                    <input class="btn btn-success ml-5" type="submit" name="btAction" value="CheckOut" onclick="return confirm('Are you sure to Confirm?');"/>       
+                                </div>
+                        </td>
+                    </form> 
                     </tr>
                     </tbody>
                 </table>
@@ -113,8 +135,4 @@
             </c:if>
         </div>
     </body>
-    <c:if test="${not empty cart}">
-        <jsp:include page="footer.jsp"/>
-    </c:if>
-
 </html>

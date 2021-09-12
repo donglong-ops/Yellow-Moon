@@ -40,6 +40,8 @@ public class DispatcherController extends HttpServlet {
     private final String HISTORY_DETAIL_CONTROLLER = "HistoryDetailController";
     private final String CONFIRM_CONTROLLER = "ConfirmController";
     private final String SEARCH_HISTORY_CONTROLLER = "SearchHistoryController";
+    private final String FINISH_PAY_MOMO_CONTROLLER = "FinishPayMomoController";
+    private final String MOMO_PAY_CONTROLLER = "MomoPayController";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -59,7 +61,7 @@ public class DispatcherController extends HttpServlet {
         String url = LOGIN_PAGE;
         try {
             if (button == null) {
-                session.setAttribute("LISTCATE", new CategoryDAO().getAllCategory());
+                session.setAttribute("LISTCATE", new CategoryDAO().getAllCategory());              
                 url = "search.jsp";
             } else if (button.equals("Login")) {
                 url = LOGIN_CONTROLLER;
@@ -97,6 +99,10 @@ public class DispatcherController extends HttpServlet {
                 url= CONFIRM_CONTROLLER;
             }else if(button.equals("Search History")){
                 url= SEARCH_HISTORY_CONTROLLER;
+            }else if(button.equals("FinishPay")){
+                url= FINISH_PAY_MOMO_CONTROLLER;
+            }else if(button.equals("Momo payment")){
+                url= MOMO_PAY_CONTROLLER;
             }
                     
         } catch (SQLException ex) {

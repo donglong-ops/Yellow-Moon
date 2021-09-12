@@ -6,25 +6,27 @@
 package longdh.controllers;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.SQLException;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import longdh.booking.BookingDTO;
-import longdh.utils.MomoResponse;
-import longdh.utils.MomoUtils;
+import longdh.booking.BookingDAO;
+import longdh.registration.RegistrationDTO;
 
 /**
  *
  * @author Dong Long
  */
-@WebServlet(name = "MomoPayController", urlPatterns = {"/MomoPayController"})
-public class MomoPayController extends HttpServlet {
-    private final String URL_LOGIN_PAGE = "login.html";
-    private final String ERROR_PAGE = "errorPage.jsp";
+@WebServlet(name = "FinishPayMomoController", urlPatterns = {"/FinishPayMomoController"})
+public class FinishPayMomoController extends HttpServlet {
+
+    private final String HISTORY_PAGE = "DispatcherController?btAction=History";
+    private final String LOGIN_PAGE = "login.html";
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -37,31 +39,43 @@ public class MomoPayController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        String url = URL_LOGIN_PAGE;
+        BookingDAO bookingDAO = new BookingDAO();
+        String url = LOGIN_PAGE;
+        String txtErrorCode = request.getParameter("errorCode");
+        String bookingCode = request.getParameter("requestId");
+        String[] id = bookingCode.split("\\s", 2);
+        int bookingID = Integer.parseInt(id[0]);
+        System.out.println("id update nè: " + bookingID);
+        HttpSession session = request.getSession();
+        RegistrationDTO userDto = (RegistrationDTO) session.getAttribute("USER");
+        BookingDAO dao = new BookingDAO();
+       
         try {
-            HttpSession session = request.getSession();
-            if (session != null) {
-                session.removeAttribute("USER");
+
+            if (bookingID > 0) {
+                bookingDAO.updateStatusBooking(bookingID, bookingID +" YellowMoonSayHi" , "Momo Pay");
+                if (userDto == null) {
+                    userDto = dao.getUserByBookingID(bookingID);
+                    if (userDto != null) {
+                        session.setAttribute("USER", userDto);
+                        session.removeAttribute("CART");
+                    }
+                }else{
+                    url = HISTORY_PAGE;
+                }
             }
-            BookingDTO booking = (BookingDTO) request.getAttribute("BOOKING_CONFIRM"); 
-            if (booking != null) {
-                String orderInfo = "Cakes Moon Payment";
-                MomoResponse momoRes = MomoUtils.requestPayment(
-                        (int)booking.getTotal()+ "",
-                        booking.getId()+ " YellowMoonSayHi", 
-                        orderInfo,
-                        "userId=" + booking.getUserId() + ";" + "discountId=0"
-                );
-                url = momoRes.getPayUrl();
-                System.out.println("Đã vô momopay controller");
-            }
-        } catch (Exception ex) {
-            url = ERROR_PAGE;
-            log("Error Momopay Controller: " + ex.getMessage());
+            //int errorCode = Util.getInt(txtErrorCode, -1, 0);
+//            if (errorCode > 0) {
+//                bookingDAO.updateStatusBooking(bookingID, "Momo Pay");
+//                url = HISTORY_PAGE;
+//            }
+
+        } catch (SQLException ex) {
+            log("Error FinishPayMomo SQL: " + ex.getMessage());
+        } catch (NamingException ex) {
+            log("Error FinishPayMomo Namming: " + ex.getMessage());
         } finally {
             response.sendRedirect(url);
-            out.close();
         }
     }
 

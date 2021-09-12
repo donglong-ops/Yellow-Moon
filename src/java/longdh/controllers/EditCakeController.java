@@ -14,8 +14,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import longdh.cake.CakeDAO;
 import longdh.cake.CakeDTO;
+import longdh.category.CategoryDAO;
+import longdh.status.StatusDAO;
 
 /**
  *
@@ -42,13 +45,17 @@ public class EditCakeController extends HttpServlet {
         request.setCharacterEncoding("utf-8");
         response.setCharacterEncoding("utf-8");
         PrintWriter out = response.getWriter();
+
         String url = ERROR_PAGE;
         String cakeId = request.getParameter("ID");
+        HttpSession session = request.getSession();
         try {
             if (cakeId != null) {
                 CakeDAO dao = new CakeDAO();
                 CakeDTO dto = dao.getCakeByID(Integer.parseInt(cakeId));
                 request.setAttribute("CAKEDTO", dto);
+                session.setAttribute("LISTSTATUS", new StatusDAO().getAllStatus());
+                session.setAttribute("LISTCATE", new CategoryDAO().getAllCategory());
                 url = SUCCESS_PAGE;
             }
         } catch (SQLException ex) {

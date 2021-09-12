@@ -76,9 +76,9 @@ public class BookingDetailDAO implements Serializable {
     public List<BookingDetailDTO> itemByBookingID(int bookingID) throws SQLException, NamingException {
         ArrayList<BookingDetailDTO> list = new ArrayList<>();
         try {
-            String sql = "  select b.CakeId , b.Amount as soLuong "
-                    + " from BookingDetail b ,Cake c "
-                    + " where c.cakeId = b.CakeId and b.BookingId = ? ";
+            String sql =" select bk.CakeId , bk.Amount " +
+                        " from BookingDetail bk , Booking b " +
+                        " where b.BookingId = bk.BookingId and b.BookingId = ? ";
             conn = MyConnection.getMyConnection();
             preStm = conn.prepareStatement(sql);
 
@@ -86,7 +86,7 @@ public class BookingDetailDAO implements Serializable {
             rs = preStm.executeQuery();
             while (rs.next()) {
                 int CakeId = rs.getInt("CakeId");
-                int quan = rs.getInt("soLuong");
+                int quan = rs.getInt("Amount");
 
                 list.add(new BookingDetailDTO(CakeId, quan));
             }

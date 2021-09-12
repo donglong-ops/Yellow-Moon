@@ -42,11 +42,13 @@ public class HistoryDetailController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
+        
         String url = VIEW_HISTORY_DETAIL;
         BookingDetailDAO bookingItemDAO = new BookingDetailDAO();
         BookingDAO dao = new BookingDAO();
         int bookingID = 0;
         String booking_ID = request.getParameter("ID");
+        
         if(!booking_ID.equals("")){
             bookingID = Integer.parseInt(request.getParameter("ID"));
         }
@@ -54,6 +56,7 @@ public class HistoryDetailController extends HttpServlet {
         try {
             List<BookingDetailDTO> listDetail = bookingItemDAO.itemByBookingID(bookingID);
             BookingDTO dto = dao.getBooking(bookingID);
+            
             request.setAttribute("DETAILBYID", listDetail);
             request.setAttribute("DTO", dto);
         } catch (SQLException ex) {

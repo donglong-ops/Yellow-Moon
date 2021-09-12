@@ -38,6 +38,16 @@ public class RegistrationDTO implements Serializable {
     }
     
 
+    public RegistrationDTO(int id, String email, String password, String fullname, String address, RoleDTO role, StatusDTO status) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.fullname = fullname;
+        this.address = address;
+        this.role = role;
+        this.status = status;
+    }
+    
     public RegistrationDTO(int id, String email, String password, String fullname, RoleDTO role, StatusDTO status) {
         this.id = id;
         this.email = email;

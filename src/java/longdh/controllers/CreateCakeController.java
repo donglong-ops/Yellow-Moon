@@ -22,6 +22,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.apache.tomcat.util.http.fileupload.FileItem;
 import org.apache.tomcat.util.http.fileupload.FileItemFactory;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
@@ -32,6 +33,7 @@ import longdh.cake.CakeDAO;
 import longdh.utils.Util;
 import longdh.cake.CakeDTO;
 import longdh.cake.CakeCreateError;
+import longdh.registration.RegistrationDTO;
 
 /**
  *
@@ -44,7 +46,7 @@ public class CreateCakeController extends HttpServlet {
 
     private final String CREATE_NEW_CAKE_ERROR = "createCake.jsp";
     private final String CREATE_NEW_CAKE_SUCCESS = "search.jsp";
-    
+    private final String LOST_SESSION_PAGE = "login.html";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -60,6 +62,15 @@ public class CreateCakeController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String url = CREATE_NEW_CAKE_ERROR;
+
+        HttpSession session = request.getSession();
+        RegistrationDTO userDto = (RegistrationDTO) session.getAttribute("USER");
+        if (userDto == null || userDto.getRole().getName().equals("User")) {
+            url = LOST_SESSION_PAGE;
+            request.getRequestDispatcher(url).forward(request, response);
+            return;
+        }
+
         CakeCreateError errors = new CakeCreateError();
         boolean fourdErr = false;
         try {
@@ -67,7 +78,7 @@ public class CreateCakeController extends HttpServlet {
             if (isMutilpart) {
                 FileItemFactory factory = new DiskFileItemFactory();
                 ServletFileUpload upload = new ServletFileUpload(factory);
-               
+
                 List<FileItem> items = upload.parseRequest(new ServletRequestContext(request));
                 Map<String, String> parameters = new HashMap<>();
                 FileItem fileItem = null;
@@ -83,16 +94,16 @@ public class CreateCakeController extends HttpServlet {
                 Date createDate = new Date(now.getTime());
                 String cakename = parameters.get("txtCake");
                 String cakeprice = parameters.get("txtPrice");
-                String fquantity = parameters.get("txtQuantity");
+                String cakequantity = parameters.get("txtQuantity");
                 String categori_id = parameters.get("txtCategory");
                 String description = parameters.get("txtDes");
                 String exprirationDate = parameters.get("txtExprirationDate");
-                
+
                 Date expriraDate = null;
                 try {
-                    if(exprirationDate.length() > 9){
+                    if (exprirationDate.length() > 9) {
                         expriraDate = Util.formatDate(exprirationDate);
-                    }else{
+                    } else {
                         fourdErr = true;
                         errors.setExpriraDateErr("Select Expriration date for cake");
                     }
@@ -114,7 +125,7 @@ public class CreateCakeController extends HttpServlet {
 
                 if (cakename.trim().length() < 2 || cakename.trim().length() > 70) {
                     fourdErr = true;
-                    errors.setCakenameErr("Cake name requred from 2 to 70 characters");
+                    errors.setCakenameErr("Cake name required from 2 to 70 characters");
                 }
                 float price = 0;
                 try {
@@ -122,19 +133,19 @@ public class CreateCakeController extends HttpServlet {
                 } catch (Exception e) {
 
                 }
-                if (price == 0) {
+                if (price < 0) {
                     fourdErr = true;
-                    errors.setCakepriceErr("Input price must be interger");
+                    errors.setCakepriceErr("Price must be number");
                 }
                 int quantity = 0;
                 try {
-                    quantity = Integer.parseInt(fquantity);
+                    quantity = Integer.parseInt(cakequantity);
                 } catch (Exception e) {
-
+                    
                 }
-                if (quantity == 0) {
+                if (quantity == 0 || quantity < 0) {
                     fourdErr = true;
-                    errors.setQuantityErr("Input Quantity must be interger");
+                    errors.setQuantityErr("Quantity must interger and more than 0");
                 }
 
                 if (description.trim().length() < 2 || description.trim().length() > 300) {
@@ -152,27 +163,25 @@ public class CreateCakeController extends HttpServlet {
                     fourdErr = true;
                     errors.setCategoriIDErr("Choose one Category!");
                 }
-                
-                
+
                 if (fourdErr) {
+                    CakeDTO dto = new CakeDTO(111, 222, cakename, price, quantity, categoryId, createDate, expriraDate, description, imageLink);
+                    request.setAttribute("DTO", dto);
                     request.setAttribute("CREATEERROR", errors);
                 } else {
                     CakeDAO dao = new CakeDAO();
-                    CakeDTO dto = new CakeDTO(111, cakename, price, quantity, categoryId, createDate, expriraDate, description, imageLink);
-             
+                    CakeDTO dto = new CakeDTO(111, 222, cakename, price, quantity, categoryId, createDate, expriraDate, description, imageLink);
+
                     boolean result = dao.insertCake(dto);
                     if (result) {
                         url = CREATE_NEW_CAKE_SUCCESS;
                     }
                 }
             }
-
-        } catch (SQLException ex) {
-           log("Error CreateCake SQL: " + ex.getMessage());
-        } catch (NamingException ex) {
-           log("Error CreateCake SQL: " + ex.getMessage());
+        } catch (SQLException | NamingException ex) {
+            log("Error CreateCake SQL | Namming: " + ex.getMessage());
         } catch (FileUploadException ex) {
-           log("Error CreateCake File Upload: " + ex.getMessage());
+            log("Error CreateCake File Upload: " + ex.getMessage());
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
             out.close();

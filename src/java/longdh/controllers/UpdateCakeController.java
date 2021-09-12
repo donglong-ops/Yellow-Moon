@@ -15,8 +15,6 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -66,6 +64,12 @@ public class UpdateCakeController extends HttpServlet {
         HttpSession session = request.getSession();
         RegistrationDTO userDto = (RegistrationDTO) session.getAttribute("USER");
 
+        if (userDto == null || userDto.getRole().getName().equals("User")) {
+            url = LOST_SESSION_PAGE;
+            request.getRequestDispatcher(url).forward(request, response);
+            return;
+        }
+
         CakeCreateError errors = new CakeCreateError();
         boolean fourdErr = false;
         try {
@@ -93,6 +97,7 @@ public class UpdateCakeController extends HttpServlet {
                 String cakequantity = parameters.get("txtQuantity");
                 String categori_id = parameters.get("txtCategory");
                 String description = parameters.get("txtDes");
+                String status = parameters.get("txtStatus");
                 String currImageLink = parameters.get("txtImage");
                 String exprirationDate = parameters.get("txtExprirationDate");
 
@@ -130,24 +135,24 @@ public class UpdateCakeController extends HttpServlet {
                 } catch (Exception e) {
 
                 }
-                if (price == 0) {
+                if (price < 0) {
                     fourdErr = true;
-                    errors.setCakepriceErr("Input price must be interger");
+                    errors.setCakepriceErr("Price must be number");
                 }
                 int quantity = 0;
                 try {
                     quantity = Integer.parseInt(cakequantity);
                 } catch (Exception e) {
-
+                    
                 }
-                if (quantity == 0) {
+                if (quantity == 0 || quantity < 0) {
                     fourdErr = true;
-                    errors.setQuantityErr("Input Quantity must be interger");
+                    errors.setQuantityErr("Quantity must number and greate than 0");
                 }
 
                 if (description.trim().length() < 2 || description.trim().length() > 300) {
                     fourdErr = true;
-                    errors.setDescriptionErr("Description requred from 2 to 300 characters");
+                    errors.setDescriptionErr("Description required from 2 to 300 characters");
                 }
 
                 int categoryId = 0;
@@ -163,14 +168,17 @@ public class UpdateCakeController extends HttpServlet {
                     imageUp = currImageLink;
                 }
                 if (fourdErr) {
+                    CakeDTO dto = new CakeDTO(Integer.parseInt(cakeId),Integer.parseInt(status), cakename, price, quantity, categoryId, description, imageUp, updateDate, expriraDate, userDto.getId());
+                    request.setAttribute("CAKEDTO", dto);
                     request.setAttribute("CREATEERROR", errors);
                 } else {
                     CakeDAO dao = new CakeDAO();
-                    if (userDto.getId() > 0) {
-                        CakeDTO dto = new CakeDTO(Integer.parseInt(cakeId), cakename, price, quantity, categoryId, description, imageUp, updateDate, expriraDate, userDto.getId());
+                    if (session.getAttribute("USER") != null) {
+                        CakeDTO dto = new CakeDTO(Integer.parseInt(cakeId),Integer.parseInt(status), cakename, price, quantity, categoryId, description, imageUp, updateDate, expriraDate, userDto.getId());
                         boolean result = dao.updateCake(dto);
                         if (result) {
                             url = UPDATE_SUCCESS_PAGE;
+                            request.removeAttribute("AllPRODUCT");
                         }
                     } else {
                         session.removeAttribute("USER");

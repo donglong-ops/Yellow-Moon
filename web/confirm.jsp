@@ -37,14 +37,14 @@
                 </thead>
                 <tbody>
                     <jsp:useBean id="dao" class="longdh.cake.CakeDAO"/>
-                    
+
                     <c:forEach var="item" items="${cart.items}" varStatus="counter" >
                         <tr>
                             <c:set var="cakeId" value="${item.key}"/>
                             <c:set var="amount" value="${item.value}"></c:set>
                             <c:set var="dto" value="${mapCakes.get(cakeId)}" ></c:set>
 
-                            <td>${counter.count}</td>
+                                <td>${counter.count}</td>
                             <td>${dto.cakeName}</td>
                             <td>${cart.getPriceDisplay(cakeId)}</td>
                             <td>${dao.getCategoryName(dto.categoriID)}</td>
@@ -55,9 +55,28 @@
                         </tr>
                     </c:forEach>
                     <tr>
-                        <td colspan="5"></td>
+                        <c:set var="guessInfo" value="${requestScope.GUESSINFO}"/>
+                        <td colspan="5">
+                           
+                            <h3 class="text-center" style="color: red">Your Information</h3>
+                            <div class="form-row">
+                                <div class="col-md-4">
+                                    Your Name*: 
+                                    <input class="form-control" type="text" disabled value="${guessInfo.fullname}"/> 
+                                </div>
+                                <div class="col-md-3">
+                                    Phone*: 
+                                    <input class="form-control" type="number" disabled value="${guessInfo.phone}"/> 
+                                </div>
+                                <div class="col-md-5">
+                                    Address Ship*: 
+                                    <input class="form-control" disabled type="text" value="${guessInfo.address}"/> 
+                                </div>
+                            </div>
+                                
+                        </td>
                         <td>Total Price: ${cart.totalPriceDisplay}</td>
-                        <td colspan="2"></td>
+                        <td colspan="2"> Payment by: CASH</td>
                     </tr>
                 </tbody>
             </table>

@@ -45,6 +45,7 @@ public class LoginController extends HttpServlet {
         String url = URL_LOGINFAIL_PAGE;
         String username = request.getParameter("txtUsername");
         String password = request.getParameter("txtPassword");
+        
         try {
             String encryPassword = org.apache.commons.codec.digest.DigestUtils.sha256Hex(password);
             if (username != null && password != null && username.trim().length() > 0 && password.trim().length() > 0) {
@@ -52,6 +53,7 @@ public class LoginController extends HttpServlet {
                 //RegistrationDTO result = dao.checkLogin(username, encryPassword);
                 RegistrationDTO result = dao.checkLogin(username, password);
                 HttpSession session = request.getSession();
+                
                 if (result != null) {
                     session.setAttribute("USER", result);
                     url = URL_SUCCESS_PAGE;

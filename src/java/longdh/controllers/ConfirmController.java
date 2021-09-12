@@ -7,10 +7,9 @@ package longdh.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.naming.NamingException;
@@ -27,6 +26,8 @@ import longdh.bookingdetail.BookingDetailDTO;
 import longdh.cart.CartObject;
 import longdh.cake.CakeDAO;
 import longdh.cake.CakeDTO;
+import longdh.category.CategoryDAO;
+import longdh.registration.RegistrationDAO;
 import longdh.registration.RegistrationDTO;
 
 /**
@@ -38,6 +39,7 @@ public class ConfirmController extends HttpServlet {
 
     private final String VIEW_CART = "view.jsp";
     private final String CONFIRM_CART = "confirm.jsp";
+    private final String CONTROLLER_PAY_MOMO = "DispatcherController?btAction=Momo payment";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -53,56 +55,101 @@ public class ConfirmController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String url = VIEW_CART;
+       
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        BookingDetailDAO bookingItemDAO = new BookingDetailDAO();
+        BookingDAO bookingDAO = new BookingDAO();
+        CakeDAO cakeDAO = new CakeDAO();
+        RegistrationDAO resDAO = new RegistrationDAO();
+        int userID = -1;
         try {
             HttpSession session = request.getSession();
+            session.setAttribute("LISTCATE", new CategoryDAO().getAllCategory()); 
             RegistrationDTO userDTO = (RegistrationDTO) session.getAttribute("USER");
             CartObject cart = (CartObject) session.getAttribute("CART");
-            if (userDTO.getId() > 0 && cart.getTotalPrice() != 0) {
+
+            String paymentType = request.getParameter("txtPaymentType");
+            String customerName = request.getParameter("txtCustomerName");
+            String customerPhone = request.getParameter("txtCustomerPhone");
+            String customerAddress = request.getParameter("txtCustomerAddress");
+
+            if (session.getAttribute("USER") == null) { // user chưa login
+                System.out.println("session null");
+                if (customerName == null || customerPhone.length() < 9 || customerAddress == null) {
+                    request.setAttribute("CHECKOUTERROR", "All infomation of user required!");
+                    url = VIEW_CART;
+                    return;
+                }
+                // infomation of User
+                RegistrationDTO userDto = new RegistrationDTO();
+                userDto.setEmail("guess@gmail.com");
+                userDto.setFullname(customerName);
+                userDto.setPhone(customerPhone);
+                userDto.setAddress(customerAddress);
+                
+                userID = resDAO.insertAccount(userDto); // insert vô và trả lại userID đã insert
+                request.setAttribute("GUESSINFO", userDto);
+            }else{
+                userID = userDTO.getId();
+                System.out.println("userID của session nè: " + userID);
+            }
+            System.out.println("userID ra ngoai nè : " + userID);
+            int notBookedYet = -1;
+            if (userID > 0 && cart.getItems().size() > 0) {
                 if (cart.getCake() != null) {
                     Map<Integer, Integer> items = cart.getItems();
                     Map<Integer, CakeDTO> cakeItems = cart.getCake();
-                    BookingDetailDAO bookingItemDAO = new BookingDetailDAO();
-                    BookingDAO bookingDAO = new BookingDAO();
 
-                    List<String> confirmError = new ArrayList<>();
+                    String confirmError = null;
                     for (Integer cakeId : items.keySet()) {
-                        int totalBooked = bookingItemDAO.countTotalBookedCake(cakeId);
                         CakeDTO cakeInfo = cakeItems.get(cakeId);
                         int amount = items.get(cakeId);
-                        CakeDAO dao = new CakeDAO();
-                        int cakeQuan = dao.getCakeQuantity(cakeId);
-                        int notBookedYet = cakeQuan - totalBooked;
+                        int cakeQuantity = cakeDAO.getCakeQuantity(cakeId);
+                        notBookedYet = cakeQuantity - amount;
 
-                        if (notBookedYet - amount < 0) {
-                            confirmError.add("Cake: " + cakeInfo.getCakeName()+ " is invalid! (Remainings: " + notBookedYet + "!)");
+                        if (notBookedYet < 0) {
+                            confirmError = ("Cake: " + cakeInfo.getCakeName() + " is invalid! ( Remainings: " + cakeQuantity + " amount )");
+                            request.setAttribute("CONFIRM_ERROR", confirmError);
                         }
+
                     }
 
-                    if (confirmError.isEmpty()) {
-//                        userDTO = (RegistrationDTO) session.getAttribute("USER");
-                        System.out.println("UserId nè ở session: " + userDTO.getId());
-                        BookingDTO dto = new BookingDTO(userDTO.getId(), new Timestamp(System.currentTimeMillis()), cart.getTotalPrice());
-                        if (items != null) {
-                            int idBookingInsert = bookingDAO.insertBookingFood(dto);
+                    if (confirmError == null) {
+                        BookingDTO dto = new BookingDTO(userID, new Date(now.getTime()), cart.getTotalPrice());
+
+                        if (items.size() > 0) {
+                            int idBookingInsert = bookingDAO.insertBookingCake(dto);
                             dto.setId(idBookingInsert);
+                            dto.setPayment("CASH");
+                            dto.setPaymentStatus("Delivery Success");
+
                             if (idBookingInsert != -1) {
                                 Set<Integer> keyList = items.keySet();
                                 for (Integer cakeId : keyList) {
                                     BookingDetailDTO bookingItemDTO = new BookingDetailDTO(dto.getId(), cakeId, items.get(cakeId));
                                     bookingItemDAO.insertBookingItem(bookingItemDTO);
+                                    if (notBookedYet >= 0) {
+                                        boolean result = cakeDAO.updateCakeQuantity(cakeId, notBookedYet);
+                                        if (result) {
+                                            System.out.println("Đã update quantity cake dưới DB ");
+                                        }
+                                    }
                                 }
-                                url = CONFIRM_CART;
-                                request.setAttribute("CART", cart);
-                                session.removeAttribute("CART");
+                                if (paymentType.equals("CASH")) {
+                                    url = CONFIRM_CART;
+                                    request.setAttribute("CART", cart);
+                                    session.removeAttribute("CART");
+                                }
+                                if (paymentType.equals("MOMO")) {
+                                    url = CONTROLLER_PAY_MOMO;
+                                    request.setAttribute("BOOKING_CONFIRM", dto);
+                                }
                             }
                         }
-                    } else {
-                        request.setAttribute("CONFIRM_ERROR", confirmError);
                     }
                 }
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
             log("Error Confirm SQL: " + ex.getMessage());
         } catch (NamingException ex) {
             log("Error Naming: " + ex.getMessage());

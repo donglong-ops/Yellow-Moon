@@ -52,13 +52,14 @@ public class SearchHistoryController extends HttpServlet {
             RegistrationDTO userDTO = (RegistrationDTO) session.getAttribute("USER");
             String fromDate = request.getParameter("txtFromDate");
             String toDate = request.getParameter("txtToDate");
+            String bookingID = request.getParameter("txtBookingID");
+
             Date fromdate = null;
             Date todate = null;
             List<BookingDTO> listSearch = null;
-            if (fromDate.length() < 0 || toDate.length() < 0 ){
+            if (fromDate.length() < 0 || toDate.length() < 0) {
                 listSearch = bookDao.allBookingUser(userDTO.getId());
                 request.setAttribute("ALLHISTORY", listSearch);
-                request.getRequestDispatcher(url).forward(request, response);
                 return;
             }
             try {
@@ -67,13 +68,17 @@ public class SearchHistoryController extends HttpServlet {
                 long time2 = ((java.util.Date) new SimpleDateFormat("yyyy-MM-dd").parse(toDate)).getTime();
                 todate = new Date(time2);
             } catch (ParseException ex) {
-                request.setAttribute("DATEERR", "Date Must be format (yyyy-MM-dd) !!");
-            }
-            if (fromDate.length() > 0 && toDate.length() > 0) {
-                listSearch = bookDao.searchHis(userDTO.getId(), fromdate, todate);
+                listSearch = bookDao.allBookingUser(userDTO.getId());
                 request.setAttribute("ALLHISTORY", listSearch);
             }
-            
+            if (fromDate.length() > 0 && toDate.length() > 0 || bookingID.length() > 0) {
+                if (bookingID.length() > 0) {
+                    listSearch = bookDao.searchHisByBookingID(userDTO.getId(), Integer.parseInt(bookingID));
+                } else {
+                    listSearch = bookDao.searchHis(userDTO.getId(), fromdate, todate);
+                }
+                request.setAttribute("ALLHISTORY", listSearch);
+            }
         } catch (SQLException ex) {
             log("Error SearchHis SQL: " + ex.getMessage());
         } catch (NamingException ex) {

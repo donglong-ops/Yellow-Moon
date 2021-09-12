@@ -6,7 +6,7 @@
 package longdh.booking;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.sql.Date;
 
 /**
  *
@@ -15,29 +15,31 @@ import java.sql.Timestamp;
 public class BookingDTO implements Serializable {
 
     private int id, userId;
-    private Timestamp importedDate;
+    private Date importedDate;
     private float total;
     private String payment;
+    private String paymentStatus;
     
 
     public BookingDTO() {
     }
 
-    public BookingDTO(int userId, Timestamp importedDate, float total) {
+    public BookingDTO(int userId, Date importedDate, float total) {
         this.userId = userId;
         this.importedDate = importedDate;
         this.total = total;
     }
 
-    public BookingDTO(int id, int userId, Timestamp importedDate, float total,String payment) {
+    public BookingDTO(int id, int userId, Date importedDate, float total,String payment, String paymentStatus) {
         this.id = id;
         this.userId = userId;
         this.importedDate = importedDate;
         this.total = total;
         this.payment = payment;
+        this.paymentStatus = paymentStatus;
     }
 
-    public BookingDTO(int userId, Timestamp importedDate) {
+    public BookingDTO(int userId, Date importedDate) {
         this.userId = userId;
         this.importedDate = importedDate;
     }
@@ -58,11 +60,11 @@ public class BookingDTO implements Serializable {
         this.userId = userId;
     }
 
-    public Timestamp getImportedDate() {
+    public Date getImportedDate() {
         return importedDate;
     }
 
-    public void setImportedDate(Timestamp importedDate) {
+    public void setImportedDate(Date importedDate) {
         this.importedDate = importedDate;
     }
 
@@ -81,5 +83,14 @@ public class BookingDTO implements Serializable {
     public void setPayment(String payment) {
         this.payment = payment;
     }
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+    
     
 }

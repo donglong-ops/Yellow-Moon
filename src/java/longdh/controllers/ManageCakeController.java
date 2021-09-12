@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import longdh.cake.CakeDAO;
 import longdh.cake.CakeDTO;
+import longdh.registration.RegistrationDTO;
 
 /**
  *
@@ -25,6 +26,8 @@ import longdh.cake.CakeDTO;
 @WebServlet(name = "ManageCakeController", urlPatterns = {"/ManageCakeController"})
 public class ManageCakeController extends HttpServlet {
 
+    private final String ERROR_PAGE = "errorPage.jsp";
+    private final String LOST_SESSION_PAGE = "login.html";
     private final String URL_MANAGER_PAGE = "managerCake.jsp";
 
     /**
@@ -40,22 +43,30 @@ public class ManageCakeController extends HttpServlet {
             throws ServletException, IOException {
         request.setCharacterEncoding("utf-8");
         response.setCharacterEncoding("utf-8");
+        String url = ERROR_PAGE;
+
         HttpSession session = request.getSession();
-        String url = URL_MANAGER_PAGE;
+        RegistrationDTO userDto = (RegistrationDTO) session.getAttribute("USER");
         String pageNum = request.getParameter("pageNum");
         try {
-            CakeDAO dao = new CakeDAO();
-            List<CakeDTO> listCakes;
-
-            int numberFood = dao.countTotalCake();
-            int page = (int) (Math.ceil((double) numberFood / 5));
-            request.setAttribute("PAGENUMBER", page);
-            int pageIndex = 1;
-            if (pageNum != null) {
-                pageIndex = Integer.parseInt(pageNum);
+            if (userDto == null || userDto.getRole().getName().equals("User")) {
+                url = LOST_SESSION_PAGE;
+                session.removeAttribute("USER");
+            } else if (userDto.getRole().getName().equals("Admin")) {
+                CakeDAO dao = new CakeDAO();
+                List<CakeDTO> listCakes;
+                request.removeAttribute("AllPRODUCT");
+                int numberFood = dao.countTotalCake();
+                int page = (int) (Math.ceil((double) numberFood / 5));
+                request.setAttribute("PAGENUMBER", page);
+                int pageIndex = 1;
+                if (pageNum != null) {
+                    pageIndex = Integer.parseInt(pageNum);
+                }
+                listCakes = dao.cakePaging(pageIndex);
+                request.setAttribute("AllPRODUCT", listCakes);
+                url = URL_MANAGER_PAGE;
             }
-            listCakes = dao.cakePaging(pageIndex);
-            session.setAttribute("AllPRODUCT", listCakes);
         } catch (SQLException ex) {
             log("Error ManagerCake SQL: " + ex.getMessage());
         } catch (NamingException ex) {

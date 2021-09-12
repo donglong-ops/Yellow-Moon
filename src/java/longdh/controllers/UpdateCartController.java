@@ -8,8 +8,6 @@ package longdh.controllers;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,7 +15,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import longdh.bookingdetail.BookingDetailDAO;
 import longdh.cart.CartObject;
 import longdh.cake.CakeDAO;
 
@@ -44,7 +41,6 @@ public class UpdateCartController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String url = VIEW_CART;
-        BookingDetailDAO bookingItemDAO = new BookingDetailDAO();
         CakeDAO dao = new CakeDAO();
 
         int cakeId = Integer.parseInt(request.getParameter("txtCakeId"));
@@ -56,22 +52,21 @@ public class UpdateCartController extends HttpServlet {
                 cart = new CartObject();
             }
 
-            int totalBooked = bookingItemDAO.countTotalBookedCake(cakeId); // tổng số cake đã đặt 
-            int foodQuantity = dao.getCakeQuantity(cakeId); // tổng số cake trong DB
-
-            if (amount > 0 && foodQuantity >= totalBooked + amount) {
+            int cakeQuantity = dao.getCakeQuantity(cakeId);
+            String cakenameById = dao.getCakeName(cakeId); 
+            int soluongconlai = cakeQuantity - amount; 
+            if (soluongconlai < 0) {
+                String confirmErrs = ("Invalid Cake: " + cakenameById +  " amount: (" + cakeQuantity + " remainings)");
+                request.setAttribute("CONFIRM_ERROR", confirmErrs);
+            } else {
                 cart.updateItem(cakeId, amount);
                 session.setAttribute("CART", cart);
-            } else {
-                List<String> confirmErrs = new ArrayList<>();
-                confirmErrs.add("Invalid Cake amount: (" + (foodQuantity - totalBooked) + " remainings)");
-                request.setAttribute("CONFIRM_ERROR", confirmErrs);
+                request.removeAttribute("CONFIRM_ERROR");
             }
-
         } catch (NamingException ex) {
-           log("Error UpdateCartItem Naming: " + ex.getMessage());
+            log("Error UpdateCartItem Naming: " + ex.getMessage());
         } catch (SQLException ex) {
-           log("Error UpdateCartItem SQL: " + ex.getMessage());
+            log("Error UpdateCartItem SQL: " + ex.getMessage());
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
             out.close();

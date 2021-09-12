@@ -14,7 +14,7 @@
     </head>
     <body>
         <nav class="container navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#">Yellow Moon Shop</a>
+            <a class="navbar-brand" href="search.jsp">Yellow Moon Shop</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -29,7 +29,7 @@
                         <font color="red">Welcome, ${sessionScope.USER.fullname}</font>
                         <a class="btn border btn-light" href="DispatcherController?btAction=LogOut">LogOut</a>
                     </c:if>
-                    <c:if test="${sessionScope.USER.role.name == 'User'}">
+                    <c:if test="${sessionScope.USER.role.name == 'User' || sessionScope.USER.role.name == null}">
                         <a class="btn btn-info" href="DispatcherController?btAction=ViewCart">View Cart</a>
                     </c:if>
                     <c:if test="${sessionScope.USER.role.name == 'User'}">

@@ -10,7 +10,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Confirm Page</title>
+        <title>History Detail Page</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     </head>
     <body>
@@ -29,7 +29,7 @@
                     <tr>
                         <th>DateBuy</th>
                         <th>Total</th>
-                        <th>Food Name</th>
+                        <th>Cake Name</th>
                         <th>Image</th>
                         <th>Amount</th>
                     </tr>
@@ -41,8 +41,8 @@
                     </tr>
                     <c:forEach var="dto" items="${hisById}" varStatus="counter" >
                         <tr>
-                            <td>${dto.foodName}</td>
-                            <td><img class="border rounded" src="${dto.imageLink}" width="150" height="180"/></td>
+                            <td>${dto.cakeName}</td>
+                            <td><img class="border rounded" src="${dto.imageLink}" width="150" height="120"/></td>
                             <td>${dto.amount}</td>         
                         </tr>
                     </c:forEach>

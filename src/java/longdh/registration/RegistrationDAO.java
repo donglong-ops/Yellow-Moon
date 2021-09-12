@@ -43,7 +43,7 @@ public class RegistrationDAO implements Serializable {
     public RegistrationDTO checkLogin(String email, String password) throws SQLException, NamingException {
         RegistrationDTO result = null;
         try {
-            String SQL = "SELECT Re.ID , Email ,Password,Fullname,R.ID  AS RoleID, R.Name AS RoleName "
+            String SQL = "SELECT Re.ID , Email ,Password, Fullname, Address,  R.ID  AS RoleID, R.Name AS RoleName "
                     + " FROM Registration Re JOIN Role R ON Re.RoleID  = R.ID "
                     + " WHERE Email = ? And Password = ? ";
             conn = MyConnection.getMyConnection();
@@ -56,7 +56,8 @@ public class RegistrationDAO implements Serializable {
                 String fullname = rs.getString("Fullname");
                 int roleID = rs.getInt("RoleID");
                 String roleName = rs.getString("RoleName");
-                result = new RegistrationDTO(id, email, password, fullname, new RoleDTO(roleID, roleName), new StatusDTO(1));
+                String address = rs.getString("Address");
+                result = new RegistrationDTO(id, email, password, fullname,address, new RoleDTO(roleID, roleName), new StatusDTO(1));
             }
         } finally {
             closeConnection();
@@ -125,5 +126,30 @@ public class RegistrationDAO implements Serializable {
             closeConnection();
         }
         return userName;
+    }
+    
+    public int insertAccount(RegistrationDTO dto) throws SQLException, NamingException {
+        int id = -1;
+        try {
+            String sql = "INSERT INTO Registration (Email, Fullname, Phone, Address, RoleID, StatusID) "
+                    + " OUTPUT Inserted.ID "
+                    + " VALUES (?, ?, ?, ?, ?, ?)";
+            conn = MyConnection.getMyConnection();
+            preStm = conn.prepareStatement(sql);
+            preStm.setString(1, dto.getEmail());
+            preStm.setString(2, dto.getFullname());
+            preStm.setString(3, dto.getPhone());
+            preStm.setString(4, dto.getAddress());
+            preStm.setInt(5, 2);
+            preStm.setInt(6, 1);
+            rs = preStm.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt("ID");
+            }
+
+        } finally {
+            closeConnection();
+        }
+        return id;
     }
 }

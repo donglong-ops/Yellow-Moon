@@ -115,10 +115,7 @@ public class CakeDAO implements Serializable {
         int countPage = 0;
         try {
             String sql = "SELECT COUNT(cakeId) as totalRows FROM Cake C "
-                    + " WHERE C.statusId = 1 AND C.quantity >  0 And DATEDIFF(day , GETDATE(), C.expirationDate ) > 0"
-                    + " And C.quantity > (SELECT Count(B.Amount) AS Amount "
-                    + " FROM BookingDetail B WHERE B.CakeId = C.cakeId) ";
-
+                    + " WHERE C.statusId = 1 AND C.quantity >  0 And DATEDIFF(day , GETDATE(), C.expirationDate ) > 0 ";
             conn = MyConnection.getMyConnection();
             preStm = conn.prepareStatement(sql);
             rs = preStm.executeQuery();
@@ -140,12 +137,9 @@ public class CakeDAO implements Serializable {
         int pageSize = 5;
         int count = 2;
         try {
-            String sql = "SELECT C.cakeId, C.cakeName , C.cakePrice , C.quantity, C.description, C.createDate ,C.expirationDate , C.categoriId , C.imageLink "
+            String sql = "SELECT C.cakeId, C.cakeName , C.cakePrice , C.quantity, C.description, C.createDate ,C.expirationDate ,C.categoriId , C.statusId , C.imageLink "
                     + "    FROM Cake C "
-                    + "    WHERE C.statusId = 1 AND C.quantity >  ? And DATEDIFF(day , GETDATE(), C.expirationDate ) > 0"
-                    + " And C.quantity > (SELECT Count(B.Amount) AS Amount "
-                    + " FROM BookingDetail B "
-                    + " WHERE B.CakeId = C.cakeId) ";
+                    + "    WHERE C.statusId = 1 AND C.quantity >  ? And DATEDIFF(day , GETDATE(), C.expirationDate ) > 0";
             if (cakeName != null) {
                 sql += "And C.cakeName like ? ";
             }
@@ -194,9 +188,10 @@ public class CakeDAO implements Serializable {
                 Date createDate = rs.getDate("createDate");
                 Date expirationDate = rs.getDate("expirationDate");
                 int cate_id = rs.getInt("categoriId");
+                int status_id = rs.getInt("statusId");
                 String imageLink = rs.getString("imageLink");
 
-                CakeDTO dto = new CakeDTO(cakeId, cakename, cakePrice, quantity, cate_id, createDate, expirationDate, des, imageLink);
+                CakeDTO dto = new CakeDTO(cakeId, status_id, cakename, cakePrice, quantity, cate_id, createDate, expirationDate, des, imageLink);
                 result.add(dto);
             }
         } finally {
@@ -209,10 +204,9 @@ public class CakeDAO implements Serializable {
         List<CakeDTO> result = new ArrayList<>();
         int pageSize = 5;
         try {
-            String sql = "SELECT C.cakeId, C.cakeName , C.cakePrice , C.quantity, C.description, C.createDate, C.expirationDate ,C.categoriId , C.imageLink "
+            String sql = "SELECT C.cakeId, C.cakeName , C.cakePrice , C.quantity, C.description, C.createDate, C.expirationDate ,C.categoriId ,C.statusId , C.imageLink "
                     + " From Cake C "
-                    + " WHERE C.statusId = 1 AND C.quantity > ? And DATEDIFF(day , GETDATE(), C.expirationDate ) > 0"
-                    + " And C.quantity > (SELECT Count(B.Amount) AS Amount From BookingDetail B Where B.CakeId = C.cakeId) "
+                    + " WHERE C.statusId = 1 AND C.quantity > ? And DATEDIFF(day , GETDATE(), C.expirationDate ) > 0 "
                     + " ORDER BY DATEDIFF(day , GETDATE(), C.expirationDate ) ASC "
                     + " OFFSET ? ROWS "
                     + " FETCH NEXT ? ROWS ONLY";
@@ -231,9 +225,10 @@ public class CakeDAO implements Serializable {
                 Date createDate = rs.getDate("createDate");
                 Date expirationDate = rs.getDate("expirationDate");
                 int cate_id = rs.getInt("categoriId");
+                int status_id = rs.getInt("statusId");
                 String imageLink = rs.getString("imageLink");
 
-                CakeDTO dto = new CakeDTO(cakeId, cakeName, cakePrice, quantity, cate_id, createDate, expirationDate, des, imageLink);
+                CakeDTO dto = new CakeDTO(cakeId, status_id, cakeName, cakePrice, quantity, cate_id, createDate, expirationDate, des, imageLink);
                 result.add(dto);
             }
         } finally {
@@ -246,7 +241,7 @@ public class CakeDAO implements Serializable {
         CakeDTO result = null;
         try {
             String sql = "SELECT C.cakeId, C.cakeName , C.cakePrice , C.quantity, C.description, C.createDate, "
-                    + " C.expirationDate, C.categoriId, C.imageLink, C.updateDate, C.userId "
+                    + " C.expirationDate, C.categoriId, C.statusId , C.imageLink, C.updateDate, C.userId "
                     + " From Cake C  "
                     + " WHERE C.statusId = 1 and C.cakeId =  ? ";
             conn = MyConnection.getMyConnection();
@@ -264,9 +259,10 @@ public class CakeDAO implements Serializable {
                 Date updateDate = rs.getDate("updateDate");
                 int userId = rs.getInt("userId");
                 int cate_id = rs.getInt("categoriId");
+                int statusId = rs.getInt("statusId");
                 String imageLink = rs.getString("imageLink");
 
-                result = new CakeDTO(cakeId, cakeName, cakePrice, quantity, cate_id, createDate, expirationDate, des, imageLink, updateDate, userId);
+                result = new CakeDTO(cakeId, statusId, cakeName, cakePrice, quantity, cate_id, createDate, expirationDate, des, imageLink, updateDate, userId);
             }
         } finally {
             closeConnection();
@@ -289,6 +285,23 @@ public class CakeDAO implements Serializable {
             closeConnection();
         }
         return res;
+    }
+    
+    public String getCakeName(int cakeID) throws SQLException, NamingException {
+        String name = null;
+        try {
+            String sql = "SELECT cakeName FROM Cake Where cakeId = ? ";
+            conn = MyConnection.getMyConnection();
+            preStm = conn.prepareStatement(sql);
+            preStm.setInt(1, cakeID);
+            rs = preStm.executeQuery();
+            if (rs.next()) {
+                name = rs.getString("cakeName");
+            }
+        } finally {
+            closeConnection();
+        }
+        return name;
     }
 
     public boolean insertCake(CakeDTO dto) throws SQLException, NamingException {
@@ -337,7 +350,7 @@ public class CakeDAO implements Serializable {
         Timestamp currentDate = new Timestamp(System.currentTimeMillis());
         try {
             String sql = "UPDATE Cake SET cakeName = ? , cakePrice = ? , quantity = ? , description = ? , "
-                    + " imageLink = ?, categoriId = ? ,expirationDate = ?, updateDate = ?, userId = ? "
+                    + " imageLink = ?, categoriId = ? , statusId = ?,expirationDate = ?, updateDate = ?, userId = ? "
                     + " WHERE cakeId = ? ";
             conn = MyConnection.getMyConnection();
             preStm = conn.prepareStatement(sql);
@@ -347,10 +360,27 @@ public class CakeDAO implements Serializable {
             preStm.setString(4, dto.getDescription());
             preStm.setString(5, dto.getImageLink());
             preStm.setInt(6, dto.getCategoriID());
-            preStm.setDate(7, dto.getExpirationDate());
-            preStm.setTimestamp(8, currentDate);
-            preStm.setInt(9, dto.getUserId());
-            preStm.setInt(10, dto.getCakeId());
+            preStm.setInt(7, dto.getStatusId());
+            preStm.setDate(8, dto.getExpirationDate());
+            preStm.setTimestamp(9, currentDate);
+            preStm.setInt(10, dto.getUserId());
+            preStm.setInt(11, dto.getCakeId());
+            result = preStm.executeUpdate() > 0;
+        } finally {
+            closeConnection();
+        }
+        return result;
+    }
+    
+    public boolean updateCakeQuantity(int cakeId, int quantity) throws SQLException, NamingException {
+        boolean result = false;
+        try {
+            String sql = "UPDATE Cake SET quantity = ? WHERE cakeId = ? ";
+            conn = MyConnection.getMyConnection();
+            preStm = conn.prepareStatement(sql);
+            preStm.setInt(1, quantity);
+            preStm.setInt(2, cakeId);
+            
             result = preStm.executeUpdate() > 0;
         } finally {
             closeConnection();

@@ -44,7 +44,7 @@
                                 <option value="${cate.id}"
                                         <c:if test="${dto.categoriID eq cate.id}">
                                             selected="selected"
-                                        </c:if>>Category : ${cate.name}</option>
+                                        </c:if>>${cate.name}</option>
                             </c:forEach>
                         </select>
                         <c:if test="${not empty errors.categoriIDErr}">
@@ -74,6 +74,23 @@
                         </c:if>
                     </div>
                 </div>
+                <div class="form-row"> 
+                    <div class="col-md-6 mb-2">
+                        Status*: 
+                        <select class="form-control form-control-line" name="txtStatus">
+                            <c:set var="listStatus" value="${sessionScope.LISTSTATUS}"/>
+                            <c:forEach var="status" items="${listStatus}">
+                                <option value="${status.id}"
+                                        <c:if test="${dto.statusId eq status.id}">
+                                            selected="selected"
+                                        </c:if>>${status.name}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        Create Date: <input class="form-control" disabled value="${dto.createDate}" />
+                    </div>
+                </div>
                 <div class="form-row">
                     <input type="hidden" name="txtImage" value="${dto.imageLink}" />
                     <div class="col-md-6 mb-2">
@@ -81,7 +98,6 @@
                     </div>
                     <div class="col-md-6">
                         <jsp:useBean id="regisDao" class="longdh.registration.RegistrationDAO"/>
-                        Create Date: <input class="form-control" disabled value="${dto.createDate}" />
                         Last Update: <input class="form-control" disabled value="${dto.updateDate}" />
                         Update User: <input class="form-control" disabled value="${regisDao.getUserNameByID(dto.userId)}" />
                         Change Image: <input class="mt-2" type="file" name="fileImage" value="${param.fileImage}" /></br>
