@@ -6,10 +6,6 @@
 package longdh.bookingdetail;
 
 import java.io.Serializable;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.naming.NamingException;
 
 /**
  *
@@ -38,8 +34,6 @@ public class BookingDetailDTO implements Serializable {
     }
 
     public BookingDetailDTO(int cakeId, int amount) {
-        this.cakeName = getCakeName(cakeId);
-        this.imageLink = getCakeImage(cakeId);
         this.cakeId = cakeId;
         this.amount = amount;
     }
@@ -74,28 +68,6 @@ public class BookingDetailDTO implements Serializable {
 
     public void setAmount(int amount) {
         this.amount = amount;
-    }
-
-    public String getCakeName(int cakeId) {
-        try {
-            return new BookingDetailDAO().getCakeName(cakeId);
-        } catch (SQLException ex) {
-            Logger.getLogger(BookingDetailDTO.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NamingException ex) {
-            Logger.getLogger(BookingDetailDTO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
-
-    public String getCakeImage(int foodID) {
-        try {
-            return new BookingDetailDAO().getCakeImage(foodID);
-        } catch (SQLException ex) {
-            Logger.getLogger(BookingDetailDTO.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NamingException ex) {
-            Logger.getLogger(BookingDetailDTO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
     }
 
     public String getCakeName() {

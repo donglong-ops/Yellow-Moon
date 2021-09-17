@@ -18,7 +18,7 @@
         <div class="container mt-3 border bg-light p-4 mb-2"  >
             <div class="form-row">
                 <h2 style="text-align: center">History Detail  </h2>
-                <a class="btn btn-success text-center ml-4" href="search.jsp">  Go shopping</a>
+                <a class="btn btn-success text-center ml-4" href="HomeController">  Go shopping</a>
             </div>
         </div>
         <c:set var="hisById" value="${requestScope.DETAILBYID}"/> 
@@ -39,10 +39,11 @@
                         <td rowspan="10">${bookingDto.importedDate}</td>
                         <td rowspan="10">${bookingDto.total}</td>
                     </tr>
+                    <jsp:useBean id="dao" class="longdh.bookingdetail.BookingDetailDAO"/>
                     <c:forEach var="dto" items="${hisById}" varStatus="counter" >
                         <tr>
-                            <td>${dto.cakeName}</td>
-                            <td><img class="border rounded" src="${dto.imageLink}" width="150" height="120"/></td>
+                            <td>${dao.getCakeName(dto.cakeId)}</td>
+                            <td><img class="border rounded" src="${dao.getCakeImage(dto.cakeId)}" width="150" height="120"/></td>
                             <td>${dto.amount}</td>         
                         </tr>
                     </c:forEach>

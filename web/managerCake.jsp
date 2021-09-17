@@ -71,7 +71,7 @@
                     </tbody>
                 </table>
                 <c:if test="${not empty products}">
-                    <div class="form-row mb-4">
+                    <div class="form-row mb-4" style="float: right">
                         <c:if test="${not empty param.pageNum}">
                             <p>   Page  [ ${param.pageNum} ]: </p>
                         </c:if>
@@ -81,7 +81,7 @@
                         <c:forEach begin="1" end="${requestScope.PAGENUMBER}" varStatus="counter" step="1">
                             <form action="ManageCakeController" method="POST">
                                 <input type="hidden" name="pageNum" value="${counter.count}" />
-                                <input id="page" class="btn btn-primary ml-5" type="submit" value="${counter.count}"/>
+                                <input id="page" class="btn btn-primary ml-2" type="submit" value="${counter.count}"/>
                             </form>
                         </c:forEach>
                     </div>

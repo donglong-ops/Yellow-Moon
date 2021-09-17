@@ -42,7 +42,7 @@ public class SearchController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("utf-8");
-        
+        int pageSize = 5;
         HttpSession session = request.getSession();
         String url = URL_SEARCH_PAGE;
         String searchName = new String(request.getParameter("txtSearchName").getBytes("iso-8859-1"), "UTF-8");
@@ -50,8 +50,19 @@ public class SearchController extends HttpServlet {
         String searchFromPrice = request.getParameter("txtFromPrice");
         String searchToPrice = request.getParameter("txtToPrice");
         String pageNum = request.getParameter("pageNum");
+        if (pageNum.trim() == null) {
+            pageNum = "1";
+        }
         try {
+            CakeDAO cakeDao = new CakeDAO();
+            CategoryDAO cateDao = new CategoryDAO();
+            List<CakeDTO> listCakes;
             if (searchCate.isEmpty() && searchFromPrice.isEmpty() && searchToPrice.isEmpty()) {
+                int numberCake = cakeDao.countTotalCake(null, -1, -1, -1);
+                int page = (int) (Math.ceil((double) numberCake / 5));
+                request.setAttribute("PAGENUMBER", page);
+                listCakes = cakeDao.searchCakePaging(null, -1, -1, -1, Integer.parseInt(pageNum), pageSize);
+                request.setAttribute("SEARCH_RESULT", listCakes);
                 url = URL_SEARCH_PAGE;
             } else {
                 int cate_id;
@@ -60,7 +71,7 @@ public class SearchController extends HttpServlet {
                 } else {
                     cate_id = Integer.parseInt(searchCate);
                 }
-                
+
                 float fromPrice;
                 if (searchFromPrice.equals("")) {
                     fromPrice = -1;
@@ -75,27 +86,24 @@ public class SearchController extends HttpServlet {
                     toPrice = Float.parseFloat(searchToPrice);
                 }
 
-                String cake_name; 
+                String cake_name;
                 if (searchName.equals("")) {
                     cake_name = null;
-                }else{
+                } else {
                     cake_name = searchName;
                 }
 
-                CakeDAO dao = new CakeDAO();
-                CategoryDAO cateDao = new CategoryDAO();
-                List<CakeDTO> listCakes;
                 if (fromPrice == -1 && toPrice == -1 && searchCate.isEmpty()) {
                     //do nothing
                 } else {
-                    int numberCake = dao.countTotalCake(cake_name,cate_id, toPrice, fromPrice);
+                    int numberCake = cakeDao.countTotalCake(cake_name, cate_id, toPrice, fromPrice);
                     int page = (int) (Math.ceil((double) numberCake / 5));
                     request.setAttribute("PAGENUMBER", page);
                     int pageIndex = 1;
-                    if (pageNum != null && !pageNum.equals("")){
+                    if (pageNum.trim() != null) {
                         pageIndex = Integer.parseInt(pageNum);
                     }
-                    listCakes = dao.searchCakePaging(cake_name, cate_id, toPrice, fromPrice, pageIndex);
+                    listCakes = cakeDao.searchCakePaging(cake_name, cate_id, toPrice, fromPrice, pageIndex, pageSize);
                     request.setAttribute("SEARCH_RESULT", listCakes);
                     session.setAttribute("LISTCATE", cateDao.getAllCategory());
                 }

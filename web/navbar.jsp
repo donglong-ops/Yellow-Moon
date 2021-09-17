@@ -14,7 +14,7 @@
     </head>
     <body>
         <nav class="container navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="search.jsp">Yellow Moon Shop</a>
+            <a class="navbar-brand" href="HomeController">Yellow Moon Shop</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -26,7 +26,7 @@
                 </ul>
                 <div>
                     <c:if test="${not empty sessionScope.USER}">
-                        <font color="red">Welcome, ${sessionScope.USER.fullname}</font>
+                        <font color="red">Welcome, ${sessionScope.USER.name}</font>
                         <a class="btn border btn-light" href="DispatcherController?btAction=LogOut">LogOut</a>
                     </c:if>
                     <c:if test="${sessionScope.USER.role.name == 'User' || sessionScope.USER.role.name == null}">
@@ -42,7 +42,7 @@
                         <a class="btn-primary btn" href="createCake.html">Create New Cake</a>        
                     </c:if>
                     <c:if test="${empty sessionScope.USER}">
-                        <a class="btn btn-success" href="login.jsp">Login here!!!</a>
+                        <a class="btn btn-success" href="login.html">Login here!!!</a>
                     </c:if>
 
                 </div>

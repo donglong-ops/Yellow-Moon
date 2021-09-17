@@ -66,14 +66,12 @@ public class CakeDAO implements Serializable {
         int countPage = 0;
         try {
             String sql = "SELECT COUNT(cakeId) as totalRows FROM Cake C "
-                    + "   WHERE C.statusId = 1 and C.quantity > ? And DATEDIFF(day , GETDATE(), C.expirationDate ) > 0"
-                    + " And C.quantity > (SELECT Count(B.Amount) AS Amount "
-                    + " From BookingDetail B Where B.CakeId = C.cakeId) ";
+                    + "   WHERE C.statusId = 1 and C.quantity > ? And DATEDIFF(day , GETDATE(), C.expirationDate ) > 0 ";
             if (foodname != null) {
-                sql += "And C.cakeName like ? ";
+                sql += " And C.cakeName like ? ";
             }
             if (categoriID > 0) {
-                sql += "And C.categoriId = ? ";
+                sql += " And C.categoriId = ? ";
             }
             if (fromPrice >= 0) {
                 sql += "And C.cakePrice >= ?  ";
@@ -129,12 +127,11 @@ public class CakeDAO implements Serializable {
     }
 
     public List<CakeDTO> searchCakePaging(String cakeName, int cate_id, float toPrice, float fromPrice) throws SQLException, NamingException {
-        return searchCakePaging(cakeName, cate_id, toPrice, fromPrice, 1);
+        return searchCakePaging(cakeName, cate_id, toPrice, fromPrice, 1, 5);
     }
 
-    public List<CakeDTO> searchCakePaging(String cakeName, int categoriID, float toPrice, float fromPrice, int pageNumber) throws SQLException, NamingException {
+    public List<CakeDTO> searchCakePaging(String cakeName, int categoriID, float toPrice, float fromPrice, int pageNumber,int pageSize) throws SQLException, NamingException {
         List<CakeDTO> result = new ArrayList<>();
-        int pageSize = 5;
         int count = 2;
         try {
             String sql = "SELECT C.cakeId, C.cakeName , C.cakePrice , C.quantity, C.description, C.createDate ,C.expirationDate ,C.categoriId , C.statusId , C.imageLink "
@@ -200,9 +197,8 @@ public class CakeDAO implements Serializable {
         return result;
     }
 
-    public List<CakeDTO> cakePaging(int pageNumber) throws SQLException, NamingException {
+    public List<CakeDTO> cakePaging(int pageNumber, int pageSize) throws SQLException, NamingException {
         List<CakeDTO> result = new ArrayList<>();
-        int pageSize = 5;
         try {
             String sql = "SELECT C.cakeId, C.cakeName , C.cakePrice , C.quantity, C.description, C.createDate, C.expirationDate ,C.categoriId ,C.statusId , C.imageLink "
                     + " From Cake C "

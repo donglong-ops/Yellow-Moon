@@ -41,7 +41,6 @@ public class GoogleUtils {
         String response = Request.Get(link).execute().returnContent().asString();
         RegistrationDTO dto = new Gson().fromJson(response, RegistrationDTO.class);
         return dto;
-
     }
 
 }

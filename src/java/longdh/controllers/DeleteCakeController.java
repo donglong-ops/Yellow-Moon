@@ -43,6 +43,9 @@ public class DeleteCakeController extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         String pageNum = request.getParameter("pageNum");
+        if(pageNum == null || pageNum.length() > 0){
+            pageNum = "1";
+        }
         String url = ErrorPage;
 
         HttpSession session = request.getSession();
@@ -52,7 +55,7 @@ public class DeleteCakeController extends HttpServlet {
             CakeDAO dao = new CakeDAO();
             String id = request.getParameter("ID");
             
-            boolean result = dao.deleteCake(Integer.parseInt(id), dto.getId());
+            boolean result = dao.deleteCake(Integer.parseInt(id), Integer.parseInt(dto.getId()));
             if (result) {
                 session.setAttribute("LISTCATE", new CategoryDAO().getAllCategory());
                 url = "DispatcherController?btAction=Manager&pageNum=" + pageNum;

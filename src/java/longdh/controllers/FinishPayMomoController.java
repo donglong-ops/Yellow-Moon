@@ -45,31 +45,23 @@ public class FinishPayMomoController extends HttpServlet {
         String bookingCode = request.getParameter("requestId");
         String[] id = bookingCode.split("\\s", 2);
         int bookingID = Integer.parseInt(id[0]);
-        System.out.println("id update nè: " + bookingID);
         HttpSession session = request.getSession();
         RegistrationDTO userDto = (RegistrationDTO) session.getAttribute("USER");
         BookingDAO dao = new BookingDAO();
-       
-        try {
 
+        try {
             if (bookingID > 0) {
-                bookingDAO.updateStatusBooking(bookingID, bookingID +" YellowMoonSayHi" , "Momo Pay");
+                bookingDAO.updateStatusBooking(bookingID, bookingID + " YellowMoonSayHi", "Momo Pay");
                 if (userDto == null) {
                     userDto = dao.getUserByBookingID(bookingID);
                     if (userDto != null) {
                         session.setAttribute("USER", userDto);
                         session.removeAttribute("CART");
                     }
-                }else{
+                } else {
                     url = HISTORY_PAGE;
                 }
             }
-            //int errorCode = Util.getInt(txtErrorCode, -1, 0);
-//            if (errorCode > 0) {
-//                bookingDAO.updateStatusBooking(bookingID, "Momo Pay");
-//                url = HISTORY_PAGE;
-//            }
-
         } catch (SQLException ex) {
             log("Error FinishPayMomo SQL: " + ex.getMessage());
         } catch (NamingException ex) {

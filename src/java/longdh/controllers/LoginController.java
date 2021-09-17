@@ -27,7 +27,7 @@ import longdh.registration.RegistrationDTO;
 public class LoginController extends HttpServlet {
 
     private final String URL_LOGINFAIL_PAGE = "login.jsp";
-    private final String URL_SUCCESS_PAGE = "search.jsp";
+    private final String URL_SUCCESS_PAGE = "HomeController";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,25 +45,23 @@ public class LoginController extends HttpServlet {
         String url = URL_LOGINFAIL_PAGE;
         String username = request.getParameter("txtUsername");
         String password = request.getParameter("txtPassword");
-        
+
         try {
             String encryPassword = org.apache.commons.codec.digest.DigestUtils.sha256Hex(password);
             if (username != null && password != null && username.trim().length() > 0 && password.trim().length() > 0) {
                 RegistrationDAO dao = new RegistrationDAO();
-                //RegistrationDTO result = dao.checkLogin(username, encryPassword);
-                RegistrationDTO result = dao.checkLogin(username, password);
+                RegistrationDTO result = dao.checkLogin(username, encryPassword);
                 HttpSession session = request.getSession();
-                
+
                 if (result != null) {
                     session.setAttribute("USER", result);
-                    url = URL_SUCCESS_PAGE;
                     CategoryDAO cateDao = new CategoryDAO();
                     session.setAttribute("LISTCATE", cateDao.getAllCategory());
+                    url = URL_SUCCESS_PAGE;
                 } else {
                     request.setAttribute("LOGINFAIL", "Invalid Email or Password !!!");
                 }
             }
-
         } catch (SQLException ex) {
             log("Error Login SQL: " + ex.getMessage());
         } catch (NamingException ex) {

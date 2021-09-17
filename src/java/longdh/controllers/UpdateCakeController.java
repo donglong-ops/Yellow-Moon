@@ -69,7 +69,7 @@ public class UpdateCakeController extends HttpServlet {
             request.getRequestDispatcher(url).forward(request, response);
             return;
         }
-
+        int userId = Integer.parseInt(userDto.getId());
         CakeCreateError errors = new CakeCreateError();
         boolean fourdErr = false;
         try {
@@ -168,13 +168,13 @@ public class UpdateCakeController extends HttpServlet {
                     imageUp = currImageLink;
                 }
                 if (fourdErr) {
-                    CakeDTO dto = new CakeDTO(Integer.parseInt(cakeId),Integer.parseInt(status), cakename, price, quantity, categoryId, description, imageUp, updateDate, expriraDate, userDto.getId());
+                    CakeDTO dto = new CakeDTO(Integer.parseInt(cakeId),Integer.parseInt(status), cakename, price, quantity, categoryId, description, imageUp, updateDate, expriraDate, userId);
                     request.setAttribute("CAKEDTO", dto);
                     request.setAttribute("CREATEERROR", errors);
                 } else {
                     CakeDAO dao = new CakeDAO();
                     if (session.getAttribute("USER") != null) {
-                        CakeDTO dto = new CakeDTO(Integer.parseInt(cakeId),Integer.parseInt(status), cakename, price, quantity, categoryId, description, imageUp, updateDate, expriraDate, userDto.getId());
+                        CakeDTO dto = new CakeDTO(Integer.parseInt(cakeId),Integer.parseInt(status), cakename, price, quantity, categoryId, description, imageUp, updateDate, expriraDate, userId);
                         boolean result = dao.updateCake(dto);
                         if (result) {
                             url = UPDATE_SUCCESS_PAGE;

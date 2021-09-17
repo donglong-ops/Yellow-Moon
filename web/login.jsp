@@ -25,7 +25,7 @@
                     <input class="btn btn-light border mt-2 px-4 ml-2" type="reset" value="Reset" />
                 </div>
             </form>
-                
+
             <c:set var="error" value="${requestScope.LOGINFAIL}"/>
             <c:if test="${not empty error}" >
                 <div class="container mt-5 border bg-light p-4" style="width: 350px" >
@@ -33,10 +33,15 @@
                 </div>
             </c:if>
             <a style="margin-left: 50%">Or</a> <br/>
-            <a class="btn btn-primary mt-2" href="DispatcherController?btAction=LoginGoogle" style="margin-left: 30%">
-                <i class="fa fa-google" aria-hidden="true"></i>
-                Login With Google
-            </a> <br/>
+            <div class="form-row">
+                <a class="btn btn-danger mt-2" href="DispatcherController?btAction=LoginGoogle">
+                    <i class="fa fa-google" aria-hidden="true"></i>
+                    Login With Google
+                </a>
+                <a class="btn btn-primary mt-2 ml-2" href="createAccount.html">
+                    Create new account
+                </a> <br/>
+            </div>
         </div>
     </body>
 </html>

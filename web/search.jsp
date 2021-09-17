@@ -19,7 +19,7 @@
         <c:set var="search" value="${requestScope.SEARCH_RESULT}"/>
         <div class="container form-row">
             <div class="container border mt-3 bg-light p-3" style="max-width: 500px; margin-left: 10%"> 
-                <form action="DispatcherController" method="POST">
+                <form action="DispatcherController">
                     <h3 class="text-center mb-4">Search form</h3>
                     <div class="form-row">
                         <div class="col-md-6 mb-2">
@@ -54,10 +54,10 @@
                     <div class="form-row mt-3">
                         <div class="form-row">
                             <c:if test="${not empty param.pageNum}">
-                                <p>   Page  [ ${param.pageNum} ]: </p>
+                                <p>  Current Page  [ ${param.pageNum} ]: </p>
                             </c:if>
                             <c:if test="${empty param.pageNum}">
-                                <p>   Page  [ 1 ]: </p>
+                                <p>  Current Page  [ 1 ]: </p>
                             </c:if>
                             <c:forEach begin="1" end="${requestScope.PAGENUMBER}" varStatus="counter" step="1">
                                 <form action="SearchController" method="POST">
@@ -118,11 +118,22 @@
                                             <input type="hidden" name="txtFromPrice" value="${param.txtFromPrice}" />
                                             <input type="hidden" name="txtToPrice" value="${param.txtToPrice}" />
                                             <input type="hidden" name="pageNum" value="${param.pageNum}" />
-                                            <input class="btn btn-success" type="submit" name="btAction" value="Add To Cart"/>
+                                            <input class="btn btn-success" type="submit" name="btAction" value="Add Cart"/>
                                         </form>
                                     </c:if>
-                                    <c:if test="${not empty sessionScope.USER && sessionScope.USER.role.name == 'Admin'}">
-                                        <a class="btn btn-success" href="DispatcherController?btAction=Manager"> Manage</a>
+                                    <c:if test="${sessionScope.USER.role.name == 'Admin'}">
+                                        <form action="DispatcherController" method="POST">
+                                            <c:url var="editUrl" value="DispatcherController?btAction=Edit">
+                                                <c:param name="ID" value="${dto.cakeId}"> </c:param>
+                                                <c:param name="pageNum" value="${param.pageNum}"> </c:param>
+                                            </c:url>
+                                            <a class="btn btn-success" href="${editUrl}">Edit</a>
+                                            <c:url var="deleteUrl" value="DispatcherController?btAction=Delete">
+                                                <c:param name="ID" value="${dto.cakeId}"> </c:param>
+                                                <c:param name="pageNum" value="${param.pageNum}"> </c:param>
+                                            </c:url>
+                                            <a class="btn btn-danger" href="${deleteUrl}" onclick="return confirm('Are you sure to Delete Cake?');">Delete</a>
+                                        </form>
                                     </c:if>
                                 </td>
                             </tr>
@@ -130,12 +141,12 @@
                     </tbody>
                 </table>
                 <c:if test="${not empty search}">
-                    <div class="form-row">
+                    <div class="form-row" style="float: right">
                         <c:if test="${not empty param.pageNum}">
-                            <p>   Page  [ ${param.pageNum} ]: </p>
+                            <p>  Current Page  [ ${param.pageNum} ]: </p>
                         </c:if>
                         <c:if test="${empty param.pageNum}">
-                            <p>   Page  [ 1 ]: </p>
+                            <p>  Current Page  [ 1 ]: </p>
                         </c:if>
                         <c:forEach begin="1" end="${requestScope.PAGENUMBER}" varStatus="counter" step="1">
                             <form action="SearchController" method="POST">
@@ -144,7 +155,7 @@
                                 <input type="hidden" name="txtFromPrice" value="${param.txtFromPrice}" />
                                 <input type="hidden" name="txtToPrice" value="${param.txtToPrice}" />
                                 <input type="hidden" name="pageNum" value="${counter.count}" />
-                                <input id="page" class="btn btn-primary ml-5" type="submit" value="${counter.count}"/>
+                                <input id="page" class="btn btn-primary ml-2" type="submit" value="${counter.count}"/>
                             </form>
                         </c:forEach>
                     </div>

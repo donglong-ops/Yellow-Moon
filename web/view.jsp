@@ -23,7 +23,7 @@
                     <h2>Your Cart Includes</h2>
                 </c:if>
                 <div class="col-md-3">
-                    <a href="search.jsp" class="btn btn-primary">Add More Items To Cart</a>
+                    <a href="HomeController" class="btn btn-primary">Add More Items To Cart</a>
                 </div>
             </div>
 
@@ -88,20 +88,20 @@
                             <h3 class="text-center" style="color: red">Input your Information</h3>
                                 <div class="form-row">
                                     <div class="col-md-4">
-                                        Your Name*: <input class="form-control" type="text" name="txtCustomerName" value="${txtCustomerName}"
-                                            <c:if test="${sessionScope.USER.fullname != null}">
+                                        Your Name*: <input class="form-control" type="text" name="txtCustomerName" value="${param.txtCustomerName}"
+                                            <c:if test="${sessionScope.USER.name != null}">
                                                 disabled
                                             </c:if> /> 
                                     </div>
                                     <div class="col-md-3">
-                                        Phone*: <input class="form-control" type="number" name="txtCustomerPhone" value="${txtCustomerPhone}"
-                                            <c:if test="${sessionScope.USER.fullname != null}">
+                                        Phone*: <input class="form-control" type="number" name="txtCustomerPhone" value="${param.txtCustomerPhone}"
+                                            <c:if test="${sessionScope.USER.phone != null}">
                                                 disabled
                                             </c:if>/>
                                     </div>
                                     <div class="col-md-5">
-                                        Address Ship*: <input class="form-control" type="text" name="txtCustomerAddress" value="${txtCustomerAddress}"
-                                            <c:if test="${sessionScope.USER.fullname != null}">
+                                        Address Ship*: <input class="form-control" type="text" name="txtCustomerAddress" value="${param.txtCustomerAddress}"
+                                            <c:if test="${sessionScope.USER.address != null}">
                                                 disabled
                                             </c:if>/> 
                                     </div>

@@ -55,7 +55,7 @@ public class ConfirmController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String url = VIEW_CART;
-       
+
         Timestamp now = new Timestamp(System.currentTimeMillis());
         BookingDetailDAO bookingItemDAO = new BookingDetailDAO();
         BookingDAO bookingDAO = new BookingDAO();
@@ -64,7 +64,7 @@ public class ConfirmController extends HttpServlet {
         int userID = -1;
         try {
             HttpSession session = request.getSession();
-            session.setAttribute("LISTCATE", new CategoryDAO().getAllCategory()); 
+            session.setAttribute("LISTCATE", new CategoryDAO().getAllCategory());
             RegistrationDTO userDTO = (RegistrationDTO) session.getAttribute("USER");
             CartObject cart = (CartObject) session.getAttribute("CART");
 
@@ -73,9 +73,8 @@ public class ConfirmController extends HttpServlet {
             String customerPhone = request.getParameter("txtCustomerPhone");
             String customerAddress = request.getParameter("txtCustomerAddress");
 
-            if (session.getAttribute("USER") == null) { // user chưa login
-                System.out.println("session null");
-                if (customerName == null || customerPhone.length() < 9 || customerAddress == null) {
+            if (session.getAttribute("USER") == null) {
+                if (customerName.trim() == null || customerPhone.length() < 9 || customerAddress.trim() == null) {
                     request.setAttribute("CHECKOUTERROR", "All infomation of user required!");
                     url = VIEW_CART;
                     return;
@@ -83,17 +82,27 @@ public class ConfirmController extends HttpServlet {
                 // infomation of User
                 RegistrationDTO userDto = new RegistrationDTO();
                 userDto.setEmail("guess@gmail.com");
-                userDto.setFullname(customerName);
+                userDto.setName(customerName);
                 userDto.setPhone(customerPhone);
                 userDto.setAddress(customerAddress);
-                
-                userID = resDAO.insertAccount(userDto); // insert vô và trả lại userID đã insert
+
+                userID = resDAO.insertAccount(userDto);
                 request.setAttribute("GUESSINFO", userDto);
-            }else{
-                userID = userDTO.getId();
-                System.out.println("userID của session nè: " + userID);
+            } else {
+                if (userDTO.getPhone() == null || userDTO.getAddress() == null) {
+                    if (customerPhone.length() < 9 || customerAddress.trim() == null) {
+                        request.setAttribute("CHECKOUTERROR", "Input your infomation with Phone and Address!");
+                        url = VIEW_CART;
+                        return;
+                    } else {
+                        resDAO.updateInfomationUser(Integer.parseInt(userDTO.getId()), customerPhone, customerAddress);
+                        RegistrationDTO result = resDAO.getInfoUserLogin(Integer.parseInt(userDTO.getId()));
+                        session.removeAttribute("USER");
+                        session.setAttribute("USER", result);
+                    }
+                }
+                userID = Integer.parseInt(userDTO.getId());
             }
-            System.out.println("userID ra ngoai nè : " + userID);
             int notBookedYet = -1;
             if (userID > 0 && cart.getItems().size() > 0) {
                 if (cart.getCake() != null) {
@@ -111,7 +120,6 @@ public class ConfirmController extends HttpServlet {
                             confirmError = ("Cake: " + cakeInfo.getCakeName() + " is invalid! ( Remainings: " + cakeQuantity + " amount )");
                             request.setAttribute("CONFIRM_ERROR", confirmError);
                         }
-
                     }
 
                     if (confirmError == null) {
@@ -131,7 +139,7 @@ public class ConfirmController extends HttpServlet {
                                     if (notBookedYet >= 0) {
                                         boolean result = cakeDAO.updateCakeQuantity(cakeId, notBookedYet);
                                         if (result) {
-                                            System.out.println("Đã update quantity cake dưới DB ");
+                                            // do nothing
                                         }
                                     }
                                 }

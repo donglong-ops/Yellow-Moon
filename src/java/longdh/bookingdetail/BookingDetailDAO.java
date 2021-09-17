@@ -114,7 +114,7 @@ public class BookingDetailDAO implements Serializable {
 
     }
 
-    String getCakeImage(int foodId) throws SQLException, NamingException {
+    public String getCakeImage(int foodId) throws SQLException, NamingException {
         String image = null;
         try {
             String sql = " select imageLink from Cake where cakeId = ?";

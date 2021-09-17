@@ -73,7 +73,7 @@ public class BookingDAO implements Serializable {
         try {
             String sql = " select b.BookingId, b.ImportedDate , b.Total, b.PayWith, b.PaymentStatus  "
                     + " from Booking b  "
-                    + " where b.UserId = ?";
+                    + " where b.UserId = ? order by b.ImportedDate ";
             conn = MyConnection.getMyConnection();
             preStm = conn.prepareStatement(sql);
 
@@ -120,7 +120,7 @@ public class BookingDAO implements Serializable {
         try {
             String sql = "SELECT b.BookingId, b.ImportedDate , b.Total , b.PayWith, b.PaymentStatus "
                     + "FROM Booking b  "
-                    + "WHERE b.UserId = ? and b.ImportedDate > ? and b.ImportedDate <= ? ";
+                    + "WHERE b.UserId = ? and b.ImportedDate >= ? and b.ImportedDate <= ? ";
             conn = MyConnection.getMyConnection();
             preStm = conn.prepareStatement(sql);
 
@@ -185,7 +185,7 @@ public class BookingDAO implements Serializable {
     public RegistrationDTO getUserByBookingID(int bookingID) throws SQLException, NamingException {
         RegistrationDTO result = null;
         try {
-            String sql = "SELECT r.Id, r.Email, r.Fullname, r.Address,r.RoleID, rl.Name AS RoleName " +
+            String sql = "SELECT r.Id, r.Email, r.Name, r.Address,r.RoleID, rl.Name AS RoleName " +
                         " FROM Booking b , Registration r , Role rl " +
                         " WHERE r.Id = b.UserId and rl.Id = r.RoleID and b.BookingId = ? ";
             conn = MyConnection.getMyConnection();
@@ -193,13 +193,13 @@ public class BookingDAO implements Serializable {
             preStm.setInt(1, bookingID);
             rs = preStm.executeQuery();
             if(rs.next()) {
-                int id = rs.getInt("Id");
-                String fullname = rs.getString("Fullname");
+                String Id = String.valueOf(rs.getInt("Id"));
+                String name = rs.getString("Name");
                 String email = rs.getString("Email");
                 int roleID = rs.getInt("RoleID");
                 String roleName = rs.getString("RoleName");
                 String address = rs.getString("Address");
-                result = new RegistrationDTO(id,email, fullname, address, new RoleDTO(roleID, roleName), new StatusDTO(1));
+                result = new RegistrationDTO(Id ,email, name, address, new RoleDTO(roleID, roleName), new StatusDTO(1));
             }
         } finally {
             closeConnection();

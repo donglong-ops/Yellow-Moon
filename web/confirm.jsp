@@ -17,7 +17,7 @@
         <jsp:include page="navbar.jsp"/>
         <div class="container mt-3 border bg-light p-4" style="width: 500px" >
             <font color="red">Thank you for Buy In Our Shop! Your confirm has completed</font>
-            <a class="btn btn-success" href="search.jsp">Go shopping</a>
+            <a class="btn btn-success" href="HomeController">Go shopping</a>
             <c:set var="cart" value="${requestScope.CART}"/>
             <c:set var="mapCakes" value="${cart.getCake()}"/>
         </div><br>
@@ -62,7 +62,7 @@
                             <div class="form-row">
                                 <div class="col-md-4">
                                     Your Name*: 
-                                    <input class="form-control" type="text" disabled value="${guessInfo.fullname}"/> 
+                                    <input class="form-control" type="text" disabled value="${guessInfo.name}"/> 
                                 </div>
                                 <div class="col-md-3">
                                     Phone*: 

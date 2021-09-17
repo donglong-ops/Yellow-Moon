@@ -7,14 +7,10 @@ package longdh.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
-import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import longdh.category.CategoryDAO;
 
 /**
  *
@@ -22,7 +18,9 @@ import longdh.category.CategoryDAO;
  */
 public class DispatcherController extends HttpServlet {
     private final String LOGIN_PAGE = "login.html";
+    private final String HOME_CONTROLLER = "HomeController";
     private final String LOGIN_CONTROLLER = "LoginController";
+    private final String CREATE_ACCOUNT_CONTROLLER = "CreateAccountController";
     private final String LOGIN_GOOGLE_CONTROLLER = "LoginGoogleController";
     private final String LOGOUT_CONTROLLER = "LogoutController";
     private final String SEARCH_CONTROLLER = "SearchController";
@@ -57,15 +55,15 @@ public class DispatcherController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String button = request.getParameter("btAction"); 
-        HttpSession session = request.getSession();
         String url = LOGIN_PAGE;
         try {
             if (button == null) {
-                session.setAttribute("LISTCATE", new CategoryDAO().getAllCategory());              
-                url = "search.jsp";
-            } else if (button.equals("Login")) {
+                url = HOME_CONTROLLER;
+            } else if(button.equals("Login")) {
                 url = LOGIN_CONTROLLER;
-            } else if (button.equals("LoginGoogle")) {
+            } else if(button.equals("Create Account")) {
+                url = CREATE_ACCOUNT_CONTROLLER;
+            } else if(button.equals("LoginGoogle")) {
                 url = LOGIN_GOOGLE_CONTROLLER;
             } else if(button.equals("Add New Cake")){
                 url = CREATE_CAKE_CONTROLLER;
@@ -81,7 +79,7 @@ public class DispatcherController extends HttpServlet {
                 url= MANAGE_CAKE_CONTROLLER;
             } else if(button.equals("LogOut")){
                 url= LOGOUT_CONTROLLER;
-            } else if(button.equals("Add To Cart")){
+            } else if(button.equals("Add Cart")){
                 url= ADD_CART_CONTROLLER;
             } else if(button.equals("ViewCart")){
                 url= VIEW_CART_CONTROLLER;
@@ -104,11 +102,6 @@ public class DispatcherController extends HttpServlet {
             }else if(button.equals("Momo payment")){
                 url= MOMO_PAY_CONTROLLER;
             }
-                    
-        } catch (SQLException ex) {
-            log("Error Sql DispatcherController: " + ex.getMessage());
-        } catch (NamingException ex) {
-            log("Error Naming DispatcherController: " + ex.getMessage());
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
             out.close();

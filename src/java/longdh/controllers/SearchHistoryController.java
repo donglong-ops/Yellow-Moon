@@ -58,7 +58,7 @@ public class SearchHistoryController extends HttpServlet {
             Date todate = null;
             List<BookingDTO> listSearch = null;
             if (fromDate.length() < 0 || toDate.length() < 0) {
-                listSearch = bookDao.allBookingUser(userDTO.getId());
+                listSearch = bookDao.allBookingUser(Integer.parseInt(userDTO.getId()));
                 request.setAttribute("ALLHISTORY", listSearch);
                 return;
             }
@@ -68,14 +68,14 @@ public class SearchHistoryController extends HttpServlet {
                 long time2 = ((java.util.Date) new SimpleDateFormat("yyyy-MM-dd").parse(toDate)).getTime();
                 todate = new Date(time2);
             } catch (ParseException ex) {
-                listSearch = bookDao.allBookingUser(userDTO.getId());
+                listSearch = bookDao.allBookingUser(Integer.parseInt(userDTO.getId()));
                 request.setAttribute("ALLHISTORY", listSearch);
             }
             if (fromDate.length() > 0 && toDate.length() > 0 || bookingID.length() > 0) {
                 if (bookingID.length() > 0) {
-                    listSearch = bookDao.searchHisByBookingID(userDTO.getId(), Integer.parseInt(bookingID));
+                    listSearch = bookDao.searchHisByBookingID(Integer.parseInt(userDTO.getId()), Integer.parseInt(bookingID));
                 } else {
-                    listSearch = bookDao.searchHis(userDTO.getId(), fromdate, todate);
+                    listSearch = bookDao.searchHis(Integer.parseInt(userDTO.getId()), fromdate, todate);
                 }
                 request.setAttribute("ALLHISTORY", listSearch);
             }

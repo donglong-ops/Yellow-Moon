@@ -17,9 +17,9 @@ import longdh.status.StatusDTO;
 public class RegistrationDTO implements Serializable {
 
     
-    private int id;
+    private String id;
     private String email;
-    private String fullname;
+    private String name;
     private String password, phone, address;
     private String avatar;
     private RoleDTO role;
@@ -28,48 +28,48 @@ public class RegistrationDTO implements Serializable {
     public RegistrationDTO() {
     }
 
-    public RegistrationDTO(String fullname) {
-        this.fullname = fullname;
+    public RegistrationDTO(String name) {
+        this.name = name;
     }
 
-    public RegistrationDTO(String email, String fullname) {
+    public RegistrationDTO(String email, String name) {
         this.email = email;
-        this.fullname = fullname;
+        this.name = name;
     }
     
 
-    public RegistrationDTO(int id, String email, String password, String fullname, String address, RoleDTO role, StatusDTO status) {
+    public RegistrationDTO(String id, String email, String password, String name, String address, RoleDTO role, StatusDTO status) {
         this.id = id;
         this.email = email;
         this.password = password;
-        this.fullname = fullname;
+        this.name = name;
         this.address = address;
         this.role = role;
         this.status = status;
     }
     
-    public RegistrationDTO(int id, String email, String password, String fullname, RoleDTO role, StatusDTO status) {
+    public RegistrationDTO(String id, String email, String password, String name, RoleDTO role, StatusDTO status) {
         this.id = id;
         this.email = email;
         this.password = password;
-        this.fullname = fullname;
+        this.name = name;
         this.role = role;
         this.status = status;
     }
 
-    public RegistrationDTO(String email, String password, String fullname, String phone, String address) {
+    public RegistrationDTO(String email, String password, String name, String phone, String address) {
         this.email = email;
         this.password = password;
-        this.fullname = fullname;
+        this.name = name;
         this.phone = phone;
         this.address = address;
     }
 
-    public RegistrationDTO(int id, String email, String password, String fullname, String phone, String address, RoleDTO role, StatusDTO status) {
+    public RegistrationDTO(String id, String email, String password, String name, String phone, String address, RoleDTO role, StatusDTO status) {
         this.id = id;
         this.email = email;
         this.password = password;
-        this.fullname = fullname;
+        this.name = name;
         this.phone = phone;
         this.address = address;
         this.role = role;
@@ -84,11 +84,11 @@ public class RegistrationDTO implements Serializable {
         this.avatar = avatar;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -108,12 +108,12 @@ public class RegistrationDTO implements Serializable {
         this.password = password;
     }
 
-    public String getFullname() {
-        return fullname;
+    public String getName() {
+        return name;
     }
 
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPhone() {

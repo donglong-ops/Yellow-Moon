@@ -47,7 +47,7 @@ public class HistoryController extends HttpServlet {
         BookingDAO bookDao = new BookingDAO();
         try {
             RegistrationDTO userDTO = (RegistrationDTO) session.getAttribute("USER");
-            List<BookingDTO> list = bookDao.allBookingUser(userDTO.getId());
+            List<BookingDTO> list = bookDao.allBookingUser(Integer.parseInt(userDTO.getId()));
             request.setAttribute("ALLHISTORY", list);
         } catch (SQLException ex) {
             log("Error History SQL: " + ex.getMessage());

@@ -44,10 +44,14 @@ public class ManageCakeController extends HttpServlet {
         request.setCharacterEncoding("utf-8");
         response.setCharacterEncoding("utf-8");
         String url = ERROR_PAGE;
+        int pageSize = 5;
 
         HttpSession session = request.getSession();
         RegistrationDTO userDto = (RegistrationDTO) session.getAttribute("USER");
         String pageNum = request.getParameter("pageNum");
+        if (pageNum == null) {
+            pageNum = "1";
+        }
         try {
             if (userDto == null || userDto.getRole().getName().equals("User")) {
                 url = LOST_SESSION_PAGE;
@@ -60,10 +64,10 @@ public class ManageCakeController extends HttpServlet {
                 int page = (int) (Math.ceil((double) numberFood / 5));
                 request.setAttribute("PAGENUMBER", page);
                 int pageIndex = 1;
-                if (pageNum != null) {
+                if (pageNum.length() > 0) {
                     pageIndex = Integer.parseInt(pageNum);
                 }
-                listCakes = dao.cakePaging(pageIndex);
+                listCakes = dao.cakePaging(pageIndex, pageSize);
                 request.setAttribute("AllPRODUCT", listCakes);
                 url = URL_MANAGER_PAGE;
             }

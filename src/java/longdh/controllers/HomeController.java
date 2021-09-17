@@ -8,6 +8,7 @@ package longdh.controllers;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.List;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,15 +16,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import longdh.cart.CartObject;
 import longdh.cake.CakeDAO;
+import longdh.cake.CakeDTO;
+import longdh.category.CategoryDAO;
 
 /**
  *
  * @author Dong Long
  */
-@WebServlet(name = "AddCartController", urlPatterns = {"/AddCartController"})
-public class AddCartController extends HttpServlet {
+@WebServlet(name = "HomeController", urlPatterns = {"/HomeController"})
+public class HomeController extends HttpServlet {
+
+    private final String URL_LOGIN_PAGE = "search.jsp";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,44 +41,26 @@ public class AddCartController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        request.setCharacterEncoding("utf-8");
-        response.setCharacterEncoding("utf-8");
         PrintWriter out = response.getWriter();
-        String url = null;
-        CakeDAO dao = new CakeDAO();
-
-        String cakeId = request.getParameter("cakeId");
-        String searchName = request.getParameter("txtSearchName");
-        String searchCate = request.getParameter("txtSearchCategory");
-        String searchFromPrice = request.getParameter("txtFromPrice");
-        String searchToPrice = request.getParameter("txtToPrice");
-        String pageNumber = request.getParameter("pageNum");
+        String url = URL_LOGIN_PAGE;
+        CakeDAO cakeDao = new CakeDAO();
+        List<CakeDTO> listCakes;
         try {
             HttpSession session = request.getSession();
-            CartObject cart = (CartObject) session.getAttribute("CART");
-            if (cart == null) {
-                cart = new CartObject();
-            }
-            int id = Integer.parseInt(cakeId);
+            session.setAttribute("LISTCATE", new CategoryDAO().getAllCategory());
 
-            int cakeQuantity = dao.getCakeQuantity(id); 
-            if (cakeQuantity > 0) {
-                url = "DispatcherController"
-                        + "?btAction=Search"
-                        + "&txtSearchName=" + searchName
-                        + "&txtSearchCategory=" + searchCate
-                        + "&txtFromPrice=" + searchFromPrice
-                        + "&txtToPrice=" + searchToPrice
-                        + "&pageNum=" + pageNumber;
-                cart.addItemToCart(id);
-                session.setAttribute("CART", cart);
-            }
+            int numberCake = cakeDao.countTotalCake(null, -1, -1, -1);
+            int page = (int) (Math.ceil((double) numberCake / 5));
+            request.setAttribute("PAGENUMBER", page);
+            listCakes = cakeDao.searchCakePaging(null, -1, -1, -1, 1, 5);
+            request.setAttribute("SEARCH_RESULT", listCakes);
+            
         } catch (SQLException ex) {
-            log("Error AddTocart SQL: " + ex.getMessage());
+            log("Error Sql HomeController: " + ex.getMessage());
         } catch (NamingException ex) {
-            log("Error AddTocart Naming: " + ex.getMessage());
+            log("Error Naming HomeController: " + ex.getMessage());
         } finally {
-            response.sendRedirect(url);
+            request.getRequestDispatcher(url).forward(request, response);
             out.close();
         }
     }

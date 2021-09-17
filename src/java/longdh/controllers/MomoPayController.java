@@ -54,7 +54,6 @@ public class MomoPayController extends HttpServlet {
                         "userId=" + booking.getUserId() + ";" + "discountId=0"
                 );
                 url = momoRes.getPayUrl();
-                System.out.println("Đã vô momopay controller");
             }
         } catch (Exception ex) {
             url = ERROR_PAGE;

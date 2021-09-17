@@ -17,6 +17,8 @@ import longdh.registration.RegistrationDTO;
 public class LoginGoogleServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+    private static final String SUCCESS_PAGE = "DispatcherController";
+    private static final String FAIL_PAGE = "login.jsp";
 
     public LoginGoogleServlet() {
         super();
@@ -27,7 +29,7 @@ public class LoginGoogleServlet extends HttpServlet {
         String code = request.getParameter("code");
         RegistrationDAO dao = new RegistrationDAO();
         HttpSession session = request.getSession();
-        String url = "login.jsp";
+        String url = FAIL_PAGE;
 
         if (code == null || code.isEmpty()) {
             request.getRequestDispatcher(url).forward(request, response);
@@ -35,21 +37,29 @@ public class LoginGoogleServlet extends HttpServlet {
             try {
                 String accessToken = GoogleUtils.getToken(code);
                 RegistrationDTO dto = GoogleUtils.getUserInfo2(accessToken);
-                RegistrationDTO userLogin = dao.checkLoginWithGoogle(dto.getEmail());
-                if (userLogin == null) {
-                    int idInsert = dao.insertAccountWithGoogle(dto.getEmail(), dto.getFullname(), 2, 1, dto.getAvatar());
-                    if (idInsert != -1) {
-                        RegistrationDTO user = dao.checkLoginWithGoogle(dto.getEmail());
-                        session.setAttribute("USER", user );
+                if (dto != null) {
+                    RegistrationDTO userLogin = dao.checkLoginWithGoogle(dto.getEmail());
+                    if (userLogin == null) {
+                        int idInsert = dao.insertAccountWithGoogle(dto.getEmail(), dto.getName(), 2, 1, dto.getAvatar());
+                        if (idInsert != -1) {
+                            RegistrationDTO user = dao.checkLoginWithGoogle(dto.getEmail());
+                            session.setAttribute("USER", user);
+                            url = SUCCESS_PAGE;
+                        }
+                    } else {
+                        session.setAttribute("USER", userLogin);
+                        url = SUCCESS_PAGE;
                     }
                 } else {
-                    session.setAttribute("USER", userLogin);
+                    url = FAIL_PAGE;
+                    request.setAttribute("LOGINFAIL", "Login Fail !!!");
                 }
-                request.getRequestDispatcher("DispatcherController").forward(request, response);
             } catch (SQLException ex) {
                 log("Login with Google SQL Failed : " + ex.getMessage());
             } catch (NamingException ex) {
                 log("Login with Google Failed : " + ex.getMessage());
+            } finally {
+                request.getRequestDispatcher(url).forward(request, response);
             }
         }
 

@@ -14,7 +14,7 @@
     </head>
     <body>
         <nav class="container navbar navbar-expand-lg navbar-light bg-light mb-20"> 
-            <a class="navbar-brand" href="#">Yellow Moon Shop</a>
+            <a class="navbar-brand" href="HomeController">Yellow Moon Shop</a>
             <img class="border rounded" src="img/yellow2.png" width="150"/>
             <div class="form-row ml-5">                  
                 <div>
