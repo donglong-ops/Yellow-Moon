@@ -76,9 +76,9 @@ public class BookingDetailDAO implements Serializable {
     public List<BookingDetailDTO> itemByBookingID(int bookingID) throws SQLException, NamingException {
         ArrayList<BookingDetailDTO> list = new ArrayList<>();
         try {
-            String sql =" select bk.CakeId , bk.Amount " +
-                        " from BookingDetail bk , Booking b " +
-                        " where b.BookingId = bk.BookingId and b.BookingId = ? ";
+            String sql = " select bk.CakeId , bk.Amount "
+                    + " from BookingDetail bk , Booking b "
+                    + " where b.BookingId = bk.BookingId and b.BookingId = ? ";
             conn = MyConnection.getMyConnection();
             preStm = conn.prepareStatement(sql);
 
@@ -104,13 +104,31 @@ public class BookingDetailDAO implements Serializable {
             preStm = conn.prepareStatement(sql);
             preStm.setInt(1, cakeId);
             rs = preStm.executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
                 cakeName = rs.getString("cakeName");
             }
         } finally {
             closeConnection();
         }
         return cakeName;
+
+    }
+
+    public float getCakePrice(int cakeId) throws SQLException, NamingException {
+        float cakePrice = 0;
+        try {
+            String sql = " select cakePrice from Cake where cakeId = ?";
+            conn = MyConnection.getMyConnection();
+            preStm = conn.prepareStatement(sql);
+            preStm.setInt(1, cakeId);
+            rs = preStm.executeQuery();
+            if (rs.next()) {
+                cakePrice = rs.getFloat("cakePrice");
+            }
+        } finally {
+            closeConnection();
+        }
+        return cakePrice;
 
     }
 

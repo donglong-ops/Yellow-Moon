@@ -1,33 +1,26 @@
 /*
- * To change this license header, choose Lic  ense Headers in Project Properties.
+ * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package longdh.controllers;
+package longdh.utils;
 
+import com.paypal.base.rest.PayPalRESTException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.SQLException;
-import java.util.List;
-import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import longdh.booking.BookingDAO;
-import longdh.booking.BookingDTO;
-import longdh.registration.RegistrationDTO;
 
 /**
  *
  * @author Dong Long
  */
-@WebServlet(name = "HistoryController", urlPatterns = {"/HistoryController"})
-public class HistoryController extends HttpServlet {
+@WebServlet(name = "AuthorizePaymentController", urlPatterns = {"/AuthorizePaymentController"})
+public class AuthorizePaymentController extends HttpServlet {
 
-    private final String VIEW_HISTORY = "history.jsp";
+    private final String ERROR_PAGE = "errorPage.jsp";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,22 +34,19 @@ public class HistoryController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        String url = VIEW_HISTORY;
-        HttpSession session = request.getSession();
-        BookingDAO bookDao = new BookingDAO();
+        String url = ERROR_PAGE;
+        String total = request.getParameter("total");
+        OrderDetail orderDetail = new OrderDetail("Bill for Cake", "0", "0", "0", total);
 
         try {
-            RegistrationDTO userDTO = (RegistrationDTO) session.getAttribute("USER");
-            List<BookingDTO> list = bookDao.allBookingUser(Integer.parseInt(userDTO.getId()));
-            request.setAttribute("ALLHISTORY", list);
-        } catch (SQLException ex) {
-            log("Error History SQL: " + ex.getMessage());
-        } catch (NamingException ex) {
-            log("Error History Naming: " + ex.getMessage());
-        } finally {
+            PaymentServices paymentServices = new PaymentServices();
+            String approvalLink = paymentServices.authorizePayment(orderDetail);
+            if (approvalLink != null) {
+                response.sendRedirect(approvalLink);
+            }
+        } catch (PayPalRESTException ex) {
+            log("Error AuthorizePayentController: " + ex.getMessage());
             request.getRequestDispatcher(url).forward(request, response);
-            out.close();
         }
     }
 

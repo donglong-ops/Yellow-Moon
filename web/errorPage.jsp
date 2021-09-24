@@ -10,13 +10,23 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Error Page</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Error page</title>
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:700,900" rel="stylesheet">
+        <link href="css/style.css" type="text/css" rel="stylesheet"  />
     </head>
-    <body>
-        <jsp:include page="navbar.jsp"/>
-        <h1 class="container btn btn-danger mt-5 ml-5"> Error Page!!</h1>
-        <h1 class="container btn btn-success mt-5 ml-5"> <a href="DispatcherController?btAction=null"> Search Cake </a></h1>
 
+    <body>
+        <div id="notfound">
+            <div class="notfound">
+                <div class="notfound-404">
+                    <h1>OOPS</h1></br>
+                    <h2>Hmmm...something went wrong</h2>
+                </div>
+                <a href="HomeController">Home page</a>
+            </div>
+        </div>
     </body>
 </html>

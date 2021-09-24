@@ -23,8 +23,10 @@ import longdh.utils.MomoUtils;
  */
 @WebServlet(name = "MomoPayController", urlPatterns = {"/MomoPayController"})
 public class MomoPayController extends HttpServlet {
+
     private final String URL_LOGIN_PAGE = "login.html";
     private final String ERROR_PAGE = "errorPage.jsp";
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -44,16 +46,20 @@ public class MomoPayController extends HttpServlet {
             if (session != null) {
                 session.removeAttribute("USER");
             }
-            BookingDTO booking = (BookingDTO) request.getAttribute("BOOKING_CONFIRM"); 
+            BookingDTO booking = (BookingDTO) request.getAttribute("BOOKING_CONFIRM");
             if (booking != null) {
                 String orderInfo = "Cakes Moon Payment";
                 MomoResponse momoRes = MomoUtils.requestPayment(
-                        (int)booking.getTotal()+ "",
-                        booking.getId()+ " YellowMoonSayHi", 
+                        (int) booking.getTotal() + "",
+                        booking.getId() + " YellowMoonSayHi",
                         orderInfo,
                         "userId=" + booking.getUserId() + ";" + "discountId=0"
                 );
-                url = momoRes.getPayUrl();
+                try {
+                    url = momoRes.getPayUrl();
+                } catch (Exception e) {
+                    url = ERROR_PAGE;
+                }
             }
         } catch (Exception ex) {
             url = ERROR_PAGE;

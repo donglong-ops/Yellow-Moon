@@ -32,12 +32,13 @@
                         <th>Cake Name</th>
                         <th>Image</th>
                         <th>Amount</th>
+                        <th>Price</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td rowspan="10">${bookingDto.importedDate}</td>
-                        <td rowspan="10">${bookingDto.total}</td>
+                        <td rowspan="10">${bookingDto.total} USD</td>
                     </tr>
                     <jsp:useBean id="dao" class="longdh.bookingdetail.BookingDetailDAO"/>
                     <c:forEach var="dto" items="${hisById}" varStatus="counter" >
@@ -45,6 +46,7 @@
                             <td>${dao.getCakeName(dto.cakeId)}</td>
                             <td><img class="border rounded" src="${dao.getCakeImage(dto.cakeId)}" width="150" height="120"/></td>
                             <td>${dto.amount}</td>         
+                            <td>${dao.getCakePrice(dto.cakeId)} USD</td>         
                         </tr>
                     </c:forEach>
                 </tbody>

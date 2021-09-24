@@ -34,7 +34,7 @@ public class Util {
         String saltStr = salt.toString();
         return saltStr;
     }
-    
+
     public static Date getDate(String dateStr) {
         try {
             return formatDate(dateStr);
@@ -42,6 +42,7 @@ public class Util {
             return null;
         }
     }
+
     public static Timestamp getTimestampFromDate(Date date) {
         return new Timestamp(date.getTime());
     }
@@ -93,4 +94,22 @@ public class Util {
         }
         return valueReturn;
     }
+
+    public static float getFloat(String floatNumber) {
+        return getFloat(floatNumber, 0);
+    }
+
+    public static float getFloat(String floatNumber, float min) {
+        float number = 0;
+        try {
+            number = Float.parseFloat(floatNumber);
+            if (number < min) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            number = 0;
+        }
+        return number;
+    }
+
 }

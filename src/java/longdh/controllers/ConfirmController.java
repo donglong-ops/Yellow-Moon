@@ -133,11 +133,15 @@ public class ConfirmController extends HttpServlet {
 
                             if (idBookingInsert != -1) {
                                 Set<Integer> keyList = items.keySet();
+                                int notBooking;
                                 for (Integer cakeId : keyList) {
                                     BookingDetailDTO bookingItemDTO = new BookingDetailDTO(dto.getId(), cakeId, items.get(cakeId));
                                     bookingItemDAO.insertBookingItem(bookingItemDTO);
+                                    int cakeQuantity = cakeDAO.getCakeQuantity(cakeId);
+                                    int amount = items.get(cakeId);
+                                    notBooking = cakeQuantity - amount;
                                     if (notBookedYet >= 0) {
-                                        boolean result = cakeDAO.updateCakeQuantity(cakeId, notBookedYet);
+                                        boolean result = cakeDAO.updateCakeQuantity(cakeId, notBooking); 
                                         if (result) {
                                             // do nothing
                                         }
@@ -150,8 +154,16 @@ public class ConfirmController extends HttpServlet {
                                 }
                                 if (paymentType.equals("MOMO")) {
                                     url = CONTROLLER_PAY_MOMO;
+                                    float vnToUsd = cart.getTotalPrice() * 24000;
+                                    dto.setTotal(vnToUsd);
                                     request.setAttribute("BOOKING_CONFIRM", dto);
                                 }
+                                if (paymentType.equals("Paypal")) {
+                                    bookingDAO.updateStatusBookingPaypal(idBookingInsert, paymentType);
+                                    session.removeAttribute("CART");
+                                    url = "AuthorizePaymentController?total=" + String.valueOf(cart.getTotalPrice());
+                                }
+
                             }
                         }
                     }

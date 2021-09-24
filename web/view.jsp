@@ -54,7 +54,7 @@
                         <c:set var="mapCakes" value="${cart.getCake()}"/>
                         <jsp:useBean id="dao" class="longdh.cake.CakeDAO"/>
                         <c:forEach var="item" items="${cart.items}" varStatus="counter" >
-                        <form action="DispatcherController">
+                        <form action="DispatcherController" method="POST">
                             <tr>
                                 <c:set var="cakeId" value="${item.key}"/>
                                 <c:set var="amount" value="${item.value}"/>
@@ -119,6 +119,7 @@
                                     <select class="form-control form-control-line" name="txtPaymentType">
                                         <option value="CASH">Cash</option>
                                         <option value="MOMO">Momo payment</option>
+                                        <option value="Paypal">Paypal payment</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mt-4">

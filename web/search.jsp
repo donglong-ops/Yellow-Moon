@@ -8,18 +8,17 @@
 
 <!DOCTYPE html>
 <html>
-    <%@page contentType="text/html" pageEncoding="UTF-8"%>
+    <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta charset="UTF-8" http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>Search Page</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     </head>
     <body>
         <jsp:include page="navbar.jsp"/>
-        <c:set var="search" value="${requestScope.SEARCH_RESULT}"/>
         <div class="container form-row">
             <div class="container border mt-3 bg-light p-3" style="max-width: 500px; margin-left: 10%"> 
-                <form action="DispatcherController">
+                <form action="DispatcherController" method="POST">
                     <h3 class="text-center mb-4">Search form</h3>
                     <div class="form-row">
                         <div class="col-md-6 mb-2">
@@ -49,7 +48,7 @@
                         <input class="col-md-12 mt-2 ml-1 btn btn-primary px-5" type="submit" name="btAction" value="Search" />
                     </div>
                 </form>
-
+                <c:set var="search" value="${requestScope.SEARCH_RESULT}"/>
                 <c:if test="${not empty search}">
                     <div class="form-row mt-3">
                         <div class="form-row">
@@ -87,7 +86,7 @@
                             <th>Image</th>
                             <th>Description</th>
                             <th>Price</th>
-                            <th>Quantity</th>
+                            <th>Quanti</th>
                             <th>CreateDate</th>
                             <th>ExpirationDate</th>
                             <th>Category</th>
@@ -101,7 +100,7 @@
                                 <td>${counter.count} </td>
                                 <td>${dto.cakeName}</td>
                                 <td>
-                                    <img class="border rounded" src="${dto.imageLink}" width="180" height="150"/>
+                                    <img class="border rounded" src="${dto.imageLink}" width="170" height="150"/>
                                 </td>
                                 <td>${dto.description}</td> 
                                 <td>${dto.cakePrice}</td>

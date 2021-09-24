@@ -22,7 +22,7 @@
                     <ul>
                         <li>190 Pasteur, Phường 6, Quận 3, TP HCM</li>
                         <li>Email: Yellowmoon@good.vn</li>
-                        <li>Hotline: 0938.301.388)</li> 
+                        <li>Hotline: 0931182303</li> 
                     </ul>
                 </div>
             </div>

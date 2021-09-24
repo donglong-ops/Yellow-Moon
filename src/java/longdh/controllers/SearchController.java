@@ -50,8 +50,10 @@ public class SearchController extends HttpServlet {
         String searchFromPrice = request.getParameter("txtFromPrice");
         String searchToPrice = request.getParameter("txtToPrice");
         String pageNum = request.getParameter("pageNum");
-        if (pageNum.trim() == null) {
-            pageNum = "1";
+       
+        int pageIndex = 1;
+        if (pageNum != null && pageNum.length() > 0) {
+            pageIndex = Integer.parseInt(pageNum);
         }
         try {
             CakeDAO cakeDao = new CakeDAO();
@@ -99,10 +101,6 @@ public class SearchController extends HttpServlet {
                     int numberCake = cakeDao.countTotalCake(cake_name, cate_id, toPrice, fromPrice);
                     int page = (int) (Math.ceil((double) numberCake / 5));
                     request.setAttribute("PAGENUMBER", page);
-                    int pageIndex = 1;
-                    if (pageNum.trim() != null) {
-                        pageIndex = Integer.parseInt(pageNum);
-                    }
                     listCakes = cakeDao.searchCakePaging(cake_name, cate_id, toPrice, fromPrice, pageIndex, pageSize);
                     request.setAttribute("SEARCH_RESULT", listCakes);
                     session.setAttribute("LISTCATE", cateDao.getAllCategory());

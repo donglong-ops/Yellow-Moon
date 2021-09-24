@@ -49,6 +49,10 @@ public class AddCartController extends HttpServlet {
         String searchFromPrice = request.getParameter("txtFromPrice");
         String searchToPrice = request.getParameter("txtToPrice");
         String pageNumber = request.getParameter("pageNum");
+        int pageIndex = 1;
+        if (pageNumber != null && pageNumber.length() > 0) {
+            pageIndex = Integer.parseInt(pageNumber);
+        }
         try {
             HttpSession session = request.getSession();
             CartObject cart = (CartObject) session.getAttribute("CART");
@@ -57,7 +61,7 @@ public class AddCartController extends HttpServlet {
             }
             int id = Integer.parseInt(cakeId);
 
-            int cakeQuantity = dao.getCakeQuantity(id); 
+            int cakeQuantity = dao.getCakeQuantity(id);
             if (cakeQuantity > 0) {
                 url = "DispatcherController"
                         + "?btAction=Search"
@@ -65,7 +69,7 @@ public class AddCartController extends HttpServlet {
                         + "&txtSearchCategory=" + searchCate
                         + "&txtFromPrice=" + searchFromPrice
                         + "&txtToPrice=" + searchToPrice
-                        + "&pageNum=" + pageNumber;
+                        + "&pageNum=" + pageIndex;
                 cart.addItemToCart(id);
                 session.setAttribute("CART", cart);
             }

@@ -14,8 +14,6 @@ import javax.naming.NamingException;
 import longdh.cake.CakeDAO;
 import longdh.cake.CakeDTO;
 
-
-
 /**
  *
  * @author Dong Long
@@ -26,7 +24,6 @@ public class CartObject implements Serializable {
     public Map<Integer, Integer> items;
     public Map<Integer, CakeDTO> cakes;
     public Map<Integer, CakeDTO> listCake;
-   
 
     public CakeDTO getCakeDto() {
         return cakeDto;
@@ -48,7 +45,6 @@ public class CartObject implements Serializable {
         return items;
     }
 
-
     public void addItemToCart(int cakeId) throws SQLException, NamingException {
         if (cakeId == 0) {
             return;
@@ -61,9 +57,9 @@ public class CartObject implements Serializable {
             amount = this.items.get(cakeId) + 1;
         }
 
-        this.items.put(cakeId, amount); 
+        this.items.put(cakeId, amount);
         CakeDAO dao = new CakeDAO();
-        CakeDTO dto = dao.getCakeByID(cakeId); 
+        CakeDTO dto = dao.getCakeByID(cakeId);
 
         if (cakes == null) {
             cakes = new HashMap<>();
@@ -105,15 +101,15 @@ public class CartObject implements Serializable {
                 if (items != null) {
                     int amount = items.get(cakeId);
                     float price = cakes.get(cakeId).getCakePrice();
-                    total += amount * price;   
+                    total += amount * price;
                 }
             }
         }
         return total;
     }
-      
+
     public String getTotalPriceDisplay() {
-        DecimalFormat formatter = new DecimalFormat("###,###,###");
+        DecimalFormat formatter = new DecimalFormat("###.##");
         return formatter.format(getTotalPrice());
     }
 
@@ -127,18 +123,19 @@ public class CartObject implements Serializable {
         }
         return priceOfItems;
     }
+
     public String getPriceOfEachItemDisplay(int cakeId) {
-        DecimalFormat formatter = new DecimalFormat("###,###,###");
+        DecimalFormat formatter = new DecimalFormat("###.##");
         return formatter.format(getPriceOfItems(cakeId));
     }
-  
+
     public String getPriceOfItemsDisplay(int cakeId) {
-        DecimalFormat formatter = new DecimalFormat("###,###,###");
+        DecimalFormat formatter = new DecimalFormat("###.##");
         return formatter.format(getTotalPrice());
     }
 
     public String getPriceDisplay(int cakeId) {
-        DecimalFormat formatter = new DecimalFormat("###,###,###");
+        DecimalFormat formatter = new DecimalFormat("###.##");
         return formatter.format(cakes.get(cakeId).getCakePrice());
     }
 }

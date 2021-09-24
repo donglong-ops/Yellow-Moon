@@ -40,6 +40,7 @@ public class DispatcherController extends HttpServlet {
     private final String SEARCH_HISTORY_CONTROLLER = "SearchHistoryController";
     private final String FINISH_PAY_MOMO_CONTROLLER = "FinishPayMomoController";
     private final String MOMO_PAY_CONTROLLER = "MomoPayController";
+    private final String PAYPAL_CONTROLLER = "AuthorizePaymentController";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -101,6 +102,8 @@ public class DispatcherController extends HttpServlet {
                 url= FINISH_PAY_MOMO_CONTROLLER;
             }else if(button.equals("Momo payment")){
                 url= MOMO_PAY_CONTROLLER;
+            }else if(button.equals("Paypal payment")){
+                url= PAYPAL_CONTROLLER;
             }
         } finally {
             request.getRequestDispatcher(url).forward(request, response);

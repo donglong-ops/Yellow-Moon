@@ -134,14 +134,14 @@ public class BookingDAO implements Serializable {
                 float total = rs.getFloat("Total");
                 String payment = rs.getString("PayWith");
                 String paymentStatus = rs.getString("PaymentStatus");
-                list.add(new BookingDTO(bookingID, userID, importDate, total, payment,paymentStatus ));
+                list.add(new BookingDTO(bookingID, userID, importDate, total, payment, paymentStatus));
             }
         } finally {
             closeConnection();
         }
         return list;
     }
-    
+
     public List<BookingDTO> searchHisByBookingID(int userID, int bookingid) throws SQLException, NamingException {
         ArrayList<BookingDTO> list = new ArrayList<>();
         try {
@@ -160,7 +160,7 @@ public class BookingDAO implements Serializable {
                 float total = rs.getFloat("Total");
                 String payment = rs.getString("PayWith");
                 String paymentStatus = rs.getString("PaymentStatus");
-                list.add(new BookingDTO(bookingID, userID, importDate, total, payment,paymentStatus ));
+                list.add(new BookingDTO(bookingID, userID, importDate, total, payment, paymentStatus));
             }
         } finally {
             closeConnection();
@@ -181,25 +181,38 @@ public class BookingDAO implements Serializable {
             closeConnection();
         }
     }
-    
+
+    public void updateStatusBookingPaypal(int bookingId, String payment) throws SQLException, NamingException {
+        try {
+            conn = MyConnection.getMyConnection();
+            String sql = " UPDATE Booking SET PayWith = ? WHERE BookingId = ? ";
+            preStm = conn.prepareStatement(sql);
+            preStm.setString(1, payment);
+            preStm.setInt(2, bookingId);
+            preStm.executeUpdate();
+        } finally {
+            closeConnection();
+        }
+    }
+
     public RegistrationDTO getUserByBookingID(int bookingID) throws SQLException, NamingException {
         RegistrationDTO result = null;
         try {
-            String sql = "SELECT r.Id, r.Email, r.Name, r.Address,r.RoleID, rl.Name AS RoleName " +
-                        " FROM Booking b , Registration r , Role rl " +
-                        " WHERE r.Id = b.UserId and rl.Id = r.RoleID and b.BookingId = ? ";
+            String sql = "SELECT r.Id, r.Email, r.Name, r.Address,r.RoleID, rl.Name AS RoleName "
+                    + " FROM Booking b , Registration r , Role rl "
+                    + " WHERE r.Id = b.UserId and rl.Id = r.RoleID and b.BookingId = ? ";
             conn = MyConnection.getMyConnection();
             preStm = conn.prepareStatement(sql);
             preStm.setInt(1, bookingID);
             rs = preStm.executeQuery();
-            if(rs.next()) {
+            if (rs.next()) {
                 String Id = String.valueOf(rs.getInt("Id"));
                 String name = rs.getString("Name");
                 String email = rs.getString("Email");
                 int roleID = rs.getInt("RoleID");
                 String roleName = rs.getString("RoleName");
                 String address = rs.getString("Address");
-                result = new RegistrationDTO(Id ,email, name, address, new RoleDTO(roleID, roleName), new StatusDTO(1));
+                result = new RegistrationDTO(Id, email, name, address, new RoleDTO(roleID, roleName), new StatusDTO(1));
             }
         } finally {
             closeConnection();

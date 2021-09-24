@@ -16,7 +16,7 @@
     <body>
         <jsp:include page="navbar.jsp"/>
         <div class="container mt-2 border bg-light p-4 mb-5"  >
-            <Form action="DispatcherController">
+            <Form action="DispatcherController" method="POST">
                 <div class="form-row" >          
                     <div class="col-md-3" >
                         <h1>Your History</h1>
@@ -57,7 +57,7 @@
                         <tr>
                             <td>${item.id}</td>
                             <td>${item.importedDate}</td>
-                            <td>${item.total}</td>
+                            <td>${item.total} USD</td>
                             <td>${item.payment}</td>
                             <td style="color: green">${item.paymentStatus}</td>
                             <td>${user.address}</td>
