@@ -3,7 +3,7 @@ Background: Yellow Moon shop is an online shop selling moon cakes.
 
 Features:
 
-This system contains the following functions:
+This system following functions:
 - Function 1: Login
 o In order to tracking your order, an authentication is required.
 o If the user has not authenticated, the system redirects to the login page.
